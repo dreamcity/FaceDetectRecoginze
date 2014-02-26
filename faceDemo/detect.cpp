@@ -197,7 +197,6 @@ void Detect::on_recognize_clicked()
     const char* traindatafile="../traindata.xml";
     if((access(traindatafile,F_OK))==-1)
     {
-//         cout<<"NO Train data exit! Please train first!"<<endl;
           QMessageBox::critical(NULL, "critical", "NO Train data exit! Please train first!",QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
     }
     else
