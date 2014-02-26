@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>500</width>
+    <width>600</width>
     <height>350</height>
    </rect>
   </property>
@@ -24,6 +24,9 @@
    </property>
    <property name="text">
     <string/>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
    </property>
   </widget>
   <widget class="QPushButton" name="quit">
@@ -52,11 +55,11 @@
     <string>FaceRecognizer</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label2">
+  <widget class="QLabel" name="label1">
    <property name="geometry">
     <rect>
-     <x>330</x>
-     <y>60</y>
+     <x>320</x>
+     <y>0</y>
      <width>120</width>
      <height>120</height>
     </rect>
@@ -78,17 +81,95 @@
     <string>StartCAM</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label3">
+  <widget class="QLabel" name="label2">
    <property name="geometry">
     <rect>
      <x>320</x>
-     <y>15</y>
-     <width>160</width>
-     <height>20</height>
+     <y>120</y>
+     <width>120</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Person:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label3">
+   <property name="geometry">
+    <rect>
+     <x>460</x>
+     <y>0</y>
+     <width>120</width>
+     <height>120</height>
     </rect>
    </property>
    <property name="text">
     <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label4">
+   <property name="geometry">
+    <rect>
+     <x>460</x>
+     <y>120</y>
+     <width>120</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Person:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label5">
+   <property name="geometry">
+    <rect>
+     <x>320</x>
+     <y>150</y>
+     <width>120</width>
+     <height>120</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label6">
+   <property name="geometry">
+    <rect>
+     <x>320</x>
+     <y>270</y>
+     <width>120</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Person:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label7">
+   <property name="geometry">
+    <rect>
+     <x>460</x>
+     <y>150</y>
+     <width>120</width>
+     <height>120</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label8">
+   <property name="geometry">
+    <rect>
+     <x>460</x>
+     <y>270</y>
+     <width>120</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Person:</string>
    </property>
   </widget>
  </widget>

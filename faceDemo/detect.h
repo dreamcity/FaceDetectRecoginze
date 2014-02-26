@@ -38,7 +38,7 @@ public:
     void listDir(const char* path);
     void read_csv(const string& filename, vector<Mat>& images, vector<int>& labels);
     string faceTrain(std::vector<Mat> images,std::vector<int> labels);
-    void faceReg(const string& configfile, std::vector<Mat> testimages);
+    void faceReg(const string& configfile,std::vector<Mat> showimages, std::vector<Mat> testimages);
     ~Detect();
 
 private slots:
@@ -70,6 +70,7 @@ private:
     vector<Rect> faces;
     ofstream imgDataFile;
     string trainconfigfile;
+
 };
 
 #endif // DETECT_H

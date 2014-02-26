@@ -12,6 +12,7 @@ Detect::Detect(QWidget *parent) :
     ON_OFF=true;
     face_cascade_name = "haarcascade_frontalface_alt.xml";
 
+
 }
 
 Detect::~Detect()
@@ -192,7 +193,7 @@ void Detect::on_trainData_clicked()
 }
 void Detect::on_recognize_clicked()
 {
-    vector<Mat> images;
+
     const char* traindatafile="../traindata.xml";
     if((access(traindatafile,F_OK))==-1)
     {
@@ -201,18 +202,21 @@ void Detect::on_recognize_clicked()
     }
     else
     {
-    for(uint i=0; i<faces.size(); i++)
-    {
-        Mat crop(frame, faces[i]);
-        Mat cropface;
+        vector<Mat> images_rgb;
+        vector<Mat> images_gray;
+        Mat cropface_rgb;
         Mat cropface_gray;
-        cv::resize(crop, cropface, Size(120,120), 1, 1, CV_INTER_LINEAR);
-        cvtColor( cropface, cropface_gray, CV_BGR2GRAY );
-        equalizeHist(cropface_gray, cropface_gray );
-        images.push_back(cropface_gray);
-    }
+        for(uint i=0; i<faces.size(); i++)
+        {
+            Mat crop(frame, faces[i]);
+            cv::resize(crop, cropface_rgb, Size(120,120), 1, 1, CV_INTER_LINEAR);
+            cvtColor( cropface_rgb, cropface_gray, CV_BGR2GRAY );
+            equalizeHist(cropface_gray, cropface_gray );
+            images_rgb.push_back(cropface_rgb);
+            images_gray.push_back(cropface_gray);            
+            faceReg(traindatafile, images_rgb, images_gray);
 
-    faceReg("../traindata.xml",images);
+        }
     }
 }
 
@@ -293,33 +297,23 @@ string Detect::faceTrain(std::vector<Mat> images,std::vector<int> labels)
     return configfile;
 }
 
-void Detect::faceReg(const string& configfile, std::vector<Mat> testimages)
-
+void Detect::faceReg(const string& configfile,std::vector<Mat> showimages, std::vector<Mat> testimages)
 {
     Ptr<FaceRecognizer> model = createEigenFaceRecognizer();
     model->load(configfile);
 
     int predictedLabel;
-
-    if(testimages.size()>1)
+    Mat imagetmp_rgb;
+    for (uint i = 0; i < testimages.size(); ++i)
     {
-        QMessageBox::critical(NULL, "critical", "This version only support 1 person!",QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-    }
-    else
-    {
-        predictedLabel = model->predict(testimages[0]);
-        string result_message = format("Predicted Person = %d  ", predictedLabel);
-        QMessageBox::information(NULL, "information", result_message.c_str());
-       // ui->label3->setText(result_message.c_str());
-    }
-
-
-//    for (uint i = 0; i < testimages.size(); ++i)
-//    {
-//        predictedLabel = model->predict(testimages[i]);
-//        //cout<<"The face"<<i<<" recognize is complete!"<<endl;
+        if(i>=4)
+            break;
+        imagetmp_rgb = showimages[i];
+        cv::resize( imagetmp_rgb,  imagetmp_rgb, Size(200,200), 1, 1, CV_INTER_LINEAR);
+        predictedLabel = model->predict(testimages[i]);
+        //cout<<"The face"<<i<<" recognize is complete!"<<endl;
 //        string result_message = format("Predicted Person = %d  ", predictedLabel);
-//        QMessageBox::information(NULL, "information", result_message.c_str());
-//        //imshow(format("face%d", i), testimages[i]);
-//    }
+        //QMessageBox::information(NULL, "information", result_message.c_str());
+        imshow(format("Person:%d", predictedLabel), imagetmp_rgb);
+    }
 }

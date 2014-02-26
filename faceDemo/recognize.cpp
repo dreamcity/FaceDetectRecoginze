@@ -7,6 +7,7 @@ Recognize::Recognize(QWidget *parent) :
 {
     ui->setupUi(this);
     face_cascade_name = "haarcascade_frontalface_alt.xml";
+    indexperson=0;
 }
 
 Recognize::~Recognize()
@@ -18,20 +19,49 @@ Recognize::~Recognize()
 
 void Recognize::on_faceRecognizer_clicked()
 {
-    vector<Mat> images;
-    Mat cropface;
-    Mat cropface_gray;
-    for(uint i=0; i<faces.size(); i++)
+    indexperson=0;
+    const char* traindatafile="../traindata.xml";
+    if((access(traindatafile,F_OK))==-1)
     {
-        Mat crop(frame, faces[i]);
-        cv::resize(crop, cropface, Size(120,120), 1, 1, CV_INTER_LINEAR);
-        cvtColor( cropface, cropface_gray, CV_BGR2GRAY );
-        equalizeHist(cropface_gray, cropface_gray );
-        images.push_back(cropface_gray);
+        QMessageBox::critical(NULL, "critical", "NO Train data exit! Please train first!",QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
     }
-    faceReg("../traindata.xml",images);
-    QImage image = QImage((const uchar*)cropface.data, cropface.cols, cropface.rows, QImage::Format_RGB888).rgbSwapped();
-    ui->label2->setPixmap(QPixmap::fromImage(image));
+    else
+    {
+        QLabel *labelpic[4]  = {ui->label1, ui->label3,
+                                ui->label5, ui->label7};
+        QLabel *labelname[4] = {ui->label2, ui->label4,
+                                ui->label6, ui->label8};
+//        string str0("");
+        Mat img;
+        string str1("Person:");
+        for(int i=0; i<4; i++)
+        {
+            QImage image = QImage((const uchar*)img.data, img.cols, img.rows, QImage::Format_RGB888).rgbSwapped();
+            labelpic[i]->setPixmap(QPixmap::fromImage(image));
+            //labelpic[i]->setPixmap();
+//                    setText(str0.c_str());
+            labelname[i]->setText(str1.c_str());
+        }
+
+
+        vector<Mat> images_rgb;
+        vector<Mat> images_gray;
+        Mat cropface_rgb;
+        Mat cropface_gray;
+        for(uint i=0; i<faces.size(); i++)
+        {
+            Mat crop(frame, faces[i]);
+            cv::resize(crop, cropface_rgb, Size(120,120), 1, 1, CV_INTER_LINEAR);
+            cvtColor( cropface_rgb, cropface_gray, CV_BGR2GRAY );
+            equalizeHist(cropface_gray, cropface_gray );
+            images_rgb.push_back(cropface_rgb);
+            images_gray.push_back(cropface_gray);
+
+            faceReg(traindatafile, images_rgb, images_gray);
+
+        }
+
+    }
 
 }
 
@@ -39,7 +69,6 @@ void Recognize::detectFace(Mat frame, vector<Rect>& faces)
 {
     if( !face_cascade.load( face_cascade_name ) )
     {
-//        cout<<"--(!)Error loading!"<<endl;
         QMessageBox::critical(NULL, "critical", "--(!)Error loading!",QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
         exit(0);
     }
@@ -57,33 +86,35 @@ void Recognize::detectFace(Mat frame, vector<Rect>& faces)
 
 
 
-void Recognize::faceReg(const string& configfile, std::vector<Mat> testimages)
-
+void Recognize::faceReg(const string& configfile,std::vector<Mat> showimages, std::vector<Mat> testimages)
 {
+
     Ptr<FaceRecognizer> model = createEigenFaceRecognizer();
     model->load(configfile);
 
     int predictedLabel;
-    if(testimages.size()>1)
+    QLabel *labelpic[4]  = {ui->label1, ui->label3,
+                            ui->label5, ui->label7};
+    QLabel *labelname[4] = {ui->label2, ui->label4,
+                            ui->label6, ui->label8};
+    Mat imagetmp_rgb;
+    for (uint i = 0; i < testimages.size(); ++i)
     {
-        QMessageBox::critical(NULL, "critical", "This version only support 1 person!",QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-    }
-    else
-    {
-        predictedLabel = model->predict(testimages[0]);
-        string result_message = format("Predicted Person = %d  ", predictedLabel);
-        QMessageBox::information(NULL, "information", result_message.c_str());
-        ui->label3->setText(result_message.c_str());
-    }
-//    for (uint i = 0; i < testimages.size(); ++i)
-//    {
-//        predictedLabel = model->predict(testimages[i]);
-//        //cout<<"The face"<<i<<" recognize is complete!"<<endl;
-//        string result_message = format("Predicted Person = %d  ", predictedLabel);
-//        QMessageBox::information(NULL, "information", result_message.c_str());
-//        imshow(format("face%d", i), testimages[i]);
+//        if(i>=4)
+//            break;
+        predictedLabel = model->predict(testimages[i]);
+        imagetmp_rgb = showimages[i];
+        cv::resize( imagetmp_rgb,  imagetmp_rgb, Size(120,120), 1, 1, CV_INTER_LINEAR);
 
-//    }
+        QImage image = QImage((const uchar*)imagetmp_rgb.data, imagetmp_rgb.cols, imagetmp_rgb.rows, QImage::Format_RGB888).rgbSwapped();
+        labelpic[indexperson]->setPixmap(QPixmap::fromImage(image));
+        string result_message = format("Person = %d  ", predictedLabel);
+        labelname[indexperson]->setText(result_message.c_str());
+
+    }
+    indexperson++;
+    if( indexperson>4)
+         indexperson=0;
 }
 
 void Recognize::on_startCAM_clicked()
@@ -91,7 +122,6 @@ void Recognize::on_startCAM_clicked()
     cap.open(0);
     if(!cap.isOpened())
     {
-//        cout<<"the camera cannot open"<<endl;
         QMessageBox::critical(NULL, "critical", "the camera cannot open",QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
     }
     else

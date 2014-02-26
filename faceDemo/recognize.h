@@ -19,7 +19,7 @@ class Recognize : public QDialog
 public:
     explicit Recognize(QWidget *parent = 0);
     void detectFace(Mat frame, vector<Rect> &faces);
-    void faceReg(const string& configfile, std::vector<Mat> testimages);
+    void faceReg(const string& configfile, std::vector<Mat> showimages, std::vector<Mat> testimages);
     ~Recognize();
 
 private slots:
@@ -37,6 +37,8 @@ private:
     String face_cascade_name;
     CascadeClassifier face_cascade;
     vector<Rect> faces;
+    int indexperson;
+
 
 };
 
