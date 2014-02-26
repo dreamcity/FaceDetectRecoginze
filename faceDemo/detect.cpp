@@ -58,8 +58,6 @@ void Detect::on_changePerson_clicked()
 
 void Detect::on_takePic_clicked()
 {
-//    cap >> frame;
-//    cout<<faces.size()<<endl;
     if(faces.size()==1)
     {
         Mat crop(frame, faces[0]);
