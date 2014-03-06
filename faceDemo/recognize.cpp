@@ -108,8 +108,35 @@ void Recognize::faceReg(const string& configfile,std::vector<Mat> showimages, st
 
         QImage image = QImage((const uchar*)imagetmp_rgb.data, imagetmp_rgb.cols, imagetmp_rgb.rows, QImage::Format_RGB888).rgbSwapped();
         labelpic[indexperson]->setPixmap(QPixmap::fromImage(image));
-        string result_message = format("Person = %d  ", predictedLabel);
-        labelname[indexperson]->setText(result_message.c_str());
+//        string result_message = format("Person = %d  ", predictedLabel);
+//        labelname[indexperson]->setText(result_message.c_str());
+
+        //**********************************
+        MYSQL mysql;
+        mysql_init(&mysql);
+        if(!mysql_real_connect(&mysql, "localhost", "dreamcity","304031870", "FaceDetRec", 3306, NULL, 0))
+            {
+                printf("failed\n");
+             }
+        else
+        {
+            MYSQL_RES *res_set;
+            MYSQL_ROW row;
+            string sql_select;
+            sql_select=format("select Name from PeopleInfo WHERE IndexID=%d", predictedLabel);
+            cout<<"sql_select111="<<sql_select.c_str()<<endl;
+            mysql_query(&mysql, sql_select.c_str());
+
+
+            res_set = mysql_store_result(&mysql);
+            row = mysql_fetch_row(res_set);
+            if(row) // data exist
+            {
+               string result_message = format("Person : %s  ", row[0]);
+               labelname[indexperson]->setText(result_message.c_str());
+            }
+            mysql_close(&mysql);
+        }
 
     }
     indexperson++;

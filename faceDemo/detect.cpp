@@ -1,6 +1,11 @@
 #include "detect.h"
 #include "ui_detect.h"
 #include "QMessageBox"
+//#define MYSQLPP_MYSQL_HEADERS_BURIED
+//#include <mysql++/mysql++.h>
+//#include <QButtonGroup>
+//#include <qbuttongroup.h>
+
 using namespace cv;
 Detect::Detect(QWidget *parent) :
     QDialog(parent),
@@ -22,7 +27,7 @@ Detect::~Detect()
 
 void Detect::on_startCam_clicked()
 {
-    cap.open(0);
+    cap.open(-1);
     ui->label_name->setText("Camera test!");
     while(ON_OFF)
     {
@@ -58,6 +63,8 @@ void Detect::on_changePerson_clicked()
 
 void Detect::on_takePic_clicked()
 {
+//    cap >> frame;
+//    cout<<faces.size()<<endl;
     if(faces.size()==1)
     {
         Mat crop(frame, faces[0]);
@@ -165,11 +172,84 @@ void Detect::on_savePic_clicked()
              pixmap[i]->save(picpath.c_str());
         }
     }
-//    cout<<"file created successfully"<<endl;
+    savedatabase();
     QMessageBox::information(NULL, "information", "file created successfully");
 }
 
+void Detect::savedatabase()
+{
+    cout<<"hello mysql"<<endl;
+    MYSQL mysql;
+    mysql_init(&mysql);
 
+    cout<<"hello mysql again"<<endl;
+    if(!mysql_real_connect(&mysql, "localhost", "dreamcity","304031870", "FaceDetRec", 3306, NULL, 0))
+        {
+            printf("failed\n");
+         }
+    else
+       {
+        printf("success\n");
+        QButtonGroup BG;
+        BG.addButton(ui->radioButton,0);
+        BG.addButton(ui->radioButton_2,1);
+        BG.addButton(ui->radioButton_3,2);
+        int a = BG.checkedId();
+        string sex;
+        switch(a)
+            {
+             case 0:
+                  sex="male";
+                  break;
+             case 1:
+                  sex="female";
+                 break;
+            case 2:
+                 sex="unknown";
+                break;
+             default:
+                 break;
+             }
+         string indexid;
+         indexid=format("%d",  indexPerson);
+         string name=ui->name->text().toStdString();
+         string age=ui->age->text().toStdString();
+         string phone=ui->phonenumber->text().toStdString();
+//****************************************************************************
+         string sql_select;
+         sql_select=format("select IndexID from PeopleInfo WHERE IndexID=%d", indexPerson);
+         cout<<"sql_select="<<sql_select.c_str()<<endl;
+         mysql_query(&mysql, sql_select.c_str());
+
+         MYSQL_RES *res_set;
+         MYSQL_ROW row;
+         res_set = mysql_store_result(&mysql);
+         row = mysql_fetch_row(res_set);
+      //  cout<<"row="<<row<<endl;
+         if(row) // data exist
+         {
+            cout<<"row="<<row[0]<<endl;
+            string sql_delete;
+            sql_delete =format("delete from  PeopleInfo WHERE IndexID=%d", indexPerson);
+            cout<<"sql_delete="<<sql_delete.c_str()<<endl;
+            mysql_query(&mysql, sql_delete.c_str());
+         }
+         else //can not find
+         {
+             cout<<"helloworld"<<endl;
+         }
+         string sql_insert;
+         sql_insert = "insert into PeopleInfo (IndexID,Name,Sex,Age,PhoneNumber) values (" +
+                                  indexid + "," + "'" +
+                                  name + "'" + "," + "'" +
+                                  sex + "'" + "," +
+                                  age + "," + "'" +
+                                  phone + "'" + ")";
+         cout<< "sql_insert="<<sql_insert.c_str()<<endl;
+         mysql_query(&mysql, sql_insert.c_str());
+        mysql_close(&mysql);
+    }
+}
 
 void Detect::on_trainData_clicked()
 {
@@ -296,6 +376,8 @@ string Detect::faceTrain(std::vector<Mat> images,std::vector<int> labels)
 
 void Detect::faceReg(const string& configfile,std::vector<Mat> showimages, std::vector<Mat> testimages)
 {
+
+
     Ptr<FaceRecognizer> model = createEigenFaceRecognizer();
     model->load(configfile);
 
@@ -311,6 +393,29 @@ void Detect::faceReg(const string& configfile,std::vector<Mat> showimages, std::
         //cout<<"The face"<<i<<" recognize is complete!"<<endl;
 //        string result_message = format("Predicted Person = %d  ", predictedLabel);
         //QMessageBox::information(NULL, "information", result_message.c_str());
-        imshow(format("Person:%d", predictedLabel), imagetmp_rgb);
+        MYSQL mysql;
+        mysql_init(&mysql);
+        if(!mysql_real_connect(&mysql, "localhost", "dreamcity","304031870", "FaceDetRec", 3306, NULL, 0))
+            {
+                printf("failed\n");
+             }
+        else
+        {
+            MYSQL_RES *res_set;
+            MYSQL_ROW row;
+            string sql_select;
+            sql_select=format("select Name from PeopleInfo WHERE IndexID=%d", predictedLabel);
+            cout<<"sql_select000="<<sql_select.c_str()<<endl;
+            mysql_query(&mysql, sql_select.c_str());
+            res_set = mysql_store_result(&mysql);
+            row = mysql_fetch_row(res_set);
+            if(row) // data exist
+            {
+             imshow(format("Person : %s  ", row[0]) , imagetmp_rgb);
+            }
+            mysql_close(&mysql);
+        }
     }
+
 }
+
