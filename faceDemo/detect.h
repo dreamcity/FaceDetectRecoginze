@@ -1,5 +1,6 @@
 #ifndef DETECT_H
 #define DETECT_H
+#define MYSQLPP_MYSQL_HEADERS_BURIED
 #include "opencv2/opencv.hpp"
 #include "opencv2/core/core.hpp"
 #include "opencv2/contrib/contrib.hpp"
@@ -18,7 +19,9 @@
 #include <fcntl.h>
 #include <fstream>
 
-
+#include <mysql++/mysql++.h>
+#include <QButtonGroup>
+#include <qbuttongroup.h>
 #include <QDialog>
 
 using namespace std;
@@ -35,6 +38,7 @@ public:
     explicit Detect(QWidget *parent = 0);
     void detectFace(Mat frame, vector<Rect> &faces);
     void createImgDataFile(const char* imgfilepath, const char* imgdatafile);
+    void savedatabase();
     void listDir(const char* path);
     void read_csv(const string& filename, vector<Mat>& images, vector<int>& labels);
     string faceTrain(std::vector<Mat> images,std::vector<int> labels);

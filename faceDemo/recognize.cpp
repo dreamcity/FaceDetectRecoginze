@@ -108,8 +108,28 @@ void Recognize::faceReg(const string& configfile,std::vector<Mat> showimages, st
 
         QImage image = QImage((const uchar*)imagetmp_rgb.data, imagetmp_rgb.cols, imagetmp_rgb.rows, QImage::Format_RGB888).rgbSwapped();
         labelpic[indexperson]->setPixmap(QPixmap::fromImage(image));
-        string result_message = format("Person = %d  ", predictedLabel);
-        labelname[indexperson]->setText(result_message.c_str());
+//        string result_message = format("Person = %d  ", predictedLabel);
+//        labelname[indexperson]->setText(result_message.c_str());
+
+        //**********************************
+        MYSQL mysql;
+        mysql_init(&mysql);
+        string sql_select;
+        sql_select=format("select Name from PeopleInfo WHERE IndexID=%d", predictedLabel);
+        cout<<"sql_select="<<sql_select.c_str()<<endl;
+        mysql_query(&mysql, sql_select.c_str());
+
+        MYSQL_RES *res_set;
+        MYSQL_ROW row;
+        res_set = mysql_store_result(&mysql);
+        row = mysql_fetch_row(res_set);
+     //  cout<<"row="<<row<<endl;
+        if(row) // data exist
+        {
+           string result_message = format("Person = %s  ", row[0]);
+           cout<<"row="<<row[0]<<endl;
+           labelname[indexperson]->setText(result_message.c_str());
+        }
 
     }
     indexperson++;
