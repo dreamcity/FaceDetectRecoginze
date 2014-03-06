@@ -61,7 +61,6 @@ private slots:
 
     void on_trainData_clicked();
 
-    void on_pushButton_2_clicked();
 
 private:
     Ui::Detect *ui;

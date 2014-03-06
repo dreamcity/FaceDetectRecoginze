@@ -409,7 +409,6 @@ void Detect::faceReg(const string& configfile,std::vector<Mat> showimages, std::
             mysql_query(&mysql, sql_select.c_str());
             res_set = mysql_store_result(&mysql);
             row = mysql_fetch_row(res_set);
-        //    cout<<"row="<<row<<endl;
             if(row) // data exist
             {
              imshow(format("Person : %s  ", row[0]) , imagetmp_rgb);
