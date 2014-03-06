@@ -1,6 +1,11 @@
 #include "detect.h"
 #include "ui_detect.h"
 #include "QMessageBox"
+#define MYSQLPP_MYSQL_HEADERS_BURIED
+#include <mysql++/mysql++.h>
+#include <QButtonGroup>
+#include <qbuttongroup.h>
+
 using namespace cv;
 Detect::Detect(QWidget *parent) :
     QDialog(parent),
@@ -315,4 +320,54 @@ void Detect::faceReg(const string& configfile,std::vector<Mat> showimages, std::
         //QMessageBox::information(NULL, "information", result_message.c_str());
         imshow(format("Person:%d", predictedLabel), imagetmp_rgb);
     }
+}
+
+void Detect::on_pushButton_2_clicked()
+{
+
+    cout<<"hello mysql"<<endl;
+    MYSQL mysql;
+    mysql_init(&mysql);
+
+    cout<<"hello mysql again"<<endl;
+    if(!mysql_real_connect(&mysql, "localhost", "dreamcity","304031870", "FaceDetRec", 3306, NULL, 0))
+        {
+            printf("failed\n");
+         }
+    else
+       {
+        printf("success\n");
+        QButtonGroup BG;
+        BG.addButton(ui->radioButton,0);
+        BG.addButton(ui->radioButton_2,1);
+        BG.addButton(ui->radioButton_3,2);
+        int a = BG.checkedId();
+        string sex;
+        switch(a)
+            {
+             case 0:
+                  sex="male";
+                  break;
+             case 1:
+                  sex="female";
+                 break;
+            case 2:
+                 sex="unknown";
+                break;
+             default:
+                 break;
+             }
+         string indexid;
+         indexid=format("%d",  indexPerson);
+         string name=ui->name->text().toStdString();
+         string age=ui->age->text().toStdString();
+         string phone=ui->phonenumber->text().toStdString();
+         string sql;
+         sql ="insert into PeopleInfo (IndexID,Name,Sex,Age,PhoneNumber) values (" + indexid + "," + "'" + name + "'" + "," + "'" + sex + "'" + "," + age + "," + "'" + phone + "'" + ")";
+       cout<< "sql="<<sql<<endl;
+
+         mysql_query(&mysql, sql.c_str());
+         mysql_close(&mysql);
+
+       }
 }

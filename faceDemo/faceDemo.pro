@@ -29,12 +29,12 @@ INCLUDEPATH+= /usr/local/include
 INCLUDEPATH+=/usr/local/include/opencv
 INCLUDEPATH+=/usr/local/include/opencv2
 
+LIBS += /usr/lib/x86_64-linux-gnu/libmysqlclient.so
 
 LIBS += /usr/local/lib/libopencv_highgui.so.2.4.8
 LIBS += /usr/local/lib/libopencv_legacy.so.2.4.8
 LIBS += /usr/local/lib/libopencv_imgproc.so.2.4.8
 LIBS += /usr/local/lib/libopencv_flann.so.2.4.8
-#LIBS += /usr/local/lib/libopencv_ts.so.2.4.8
 LIBS += /usr/local/lib/libopencv_videostab.so.2.4.8
 LIBS += /usr/local/lib/libopencv_ml.so.2.4.8
 LIBS += /usr/local/lib/libopencv_core.so.2.4.8
