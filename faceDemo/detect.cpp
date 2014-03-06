@@ -376,11 +376,7 @@ string Detect::faceTrain(std::vector<Mat> images,std::vector<int> labels)
 
 void Detect::faceReg(const string& configfile,std::vector<Mat> showimages, std::vector<Mat> testimages)
 {
-    MYSQL mysql;
-    mysql_init(&mysql);
 
-    MYSQL_RES *res_set;
-    MYSQL_ROW row;
 
     Ptr<FaceRecognizer> model = createEigenFaceRecognizer();
     model->load(configfile);
@@ -397,15 +393,28 @@ void Detect::faceReg(const string& configfile,std::vector<Mat> showimages, std::
         //cout<<"The face"<<i<<" recognize is complete!"<<endl;
 //        string result_message = format("Predicted Person = %d  ", predictedLabel);
         //QMessageBox::information(NULL, "information", result_message.c_str());
-        string sql_select;
-        sql_select=format("select Name from PeopleInfo WHERE IndexID=%d", predictedLabel);
-        cout<<"sql_select="<<sql_select.c_str()<<endl;
-        mysql_query(&mysql, sql_select.c_str());
-        res_set = mysql_store_result(&mysql);
-        row = mysql_fetch_row(res_set);
-        if(row) // data exist
+        MYSQL mysql;
+        mysql_init(&mysql);
+        if(!mysql_real_connect(&mysql, "localhost", "dreamcity","304031870", "FaceDetRec", 3306, NULL, 0))
+            {
+                printf("failed\n");
+             }
+        else
         {
-        imshow(format("Person = %s  ", row[0]) , imagetmp_rgb);
+            MYSQL_RES *res_set;
+            MYSQL_ROW row;
+            string sql_select;
+            sql_select=format("select Name from PeopleInfo WHERE IndexID=%d", predictedLabel);
+            cout<<"sql_select000="<<sql_select.c_str()<<endl;
+            mysql_query(&mysql, sql_select.c_str());
+            res_set = mysql_store_result(&mysql);
+            row = mysql_fetch_row(res_set);
+        //    cout<<"row="<<row<<endl;
+            if(row) // data exist
+            {
+             imshow(format("Person : %s  ", row[0]) , imagetmp_rgb);
+            }
+            mysql_close(&mysql);
         }
     }
 
