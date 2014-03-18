@@ -15,11 +15,14 @@ TEMPLATE = app
 SOURCES += main.cpp\
         detect2recognize.cpp \
     detect.cpp \
-    recognize.cpp
+    recognize.cpp \
+    2dpcaface.cpp
 
 HEADERS  += detect2recognize.h \
     detect.h \
-    recognize.h
+    recognize.h \
+    2dpcaface.hpp \
+    2dpcaface.h
 
 FORMS    += detect2recognize.ui \
     detect.ui \

@@ -48,13 +48,15 @@ OBJECTS_DIR   = ./
 SOURCES       = ../faceDemo/main.cpp \
 		../faceDemo/detect2recognize.cpp \
 		../faceDemo/detect.cpp \
-		../faceDemo/recognize.cpp moc_detect2recognize.cpp \
+		../faceDemo/recognize.cpp \
+		../faceDemo/2dpcaface.cpp moc_detect2recognize.cpp \
 		moc_detect.cpp \
 		moc_recognize.cpp
 OBJECTS       = main.o \
 		detect2recognize.o \
 		detect.o \
 		recognize.o \
+		2dpcaface.o \
 		moc_detect2recognize.o \
 		moc_detect.o \
 		moc_recognize.o
@@ -421,7 +423,7 @@ qmake_all: FORCE
 
 dist: 
 	@test -d .tmp/faceDemo1.0.0 || mkdir -p .tmp/faceDemo1.0.0
-	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/faceDemo1.0.0/ && $(COPY_FILE) --parents ../faceDemo/detect2recognize.h ../faceDemo/detect.h ../faceDemo/recognize.h .tmp/faceDemo1.0.0/ && $(COPY_FILE) --parents ../faceDemo/main.cpp ../faceDemo/detect2recognize.cpp ../faceDemo/detect.cpp ../faceDemo/recognize.cpp .tmp/faceDemo1.0.0/ && $(COPY_FILE) --parents ../faceDemo/detect2recognize.ui ../faceDemo/detect.ui ../faceDemo/recognize.ui .tmp/faceDemo1.0.0/ && (cd `dirname .tmp/faceDemo1.0.0` && $(TAR) faceDemo1.0.0.tar faceDemo1.0.0 && $(COMPRESS) faceDemo1.0.0.tar) && $(MOVE) `dirname .tmp/faceDemo1.0.0`/faceDemo1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/faceDemo1.0.0
+	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/faceDemo1.0.0/ && $(COPY_FILE) --parents ../faceDemo/detect2recognize.h ../faceDemo/detect.h ../faceDemo/recognize.h 2dpcaface.hpp ../faceDemo/2dpcaface.h .tmp/faceDemo1.0.0/ && $(COPY_FILE) --parents ../faceDemo/main.cpp ../faceDemo/detect2recognize.cpp ../faceDemo/detect.cpp ../faceDemo/recognize.cpp ../faceDemo/2dpcaface.cpp .tmp/faceDemo1.0.0/ && $(COPY_FILE) --parents ../faceDemo/detect2recognize.ui ../faceDemo/detect.ui ../faceDemo/recognize.ui .tmp/faceDemo1.0.0/ && (cd `dirname .tmp/faceDemo1.0.0` && $(TAR) faceDemo1.0.0.tar faceDemo1.0.0 && $(COMPRESS) faceDemo1.0.0.tar) && $(MOVE) `dirname .tmp/faceDemo1.0.0`/faceDemo1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/faceDemo1.0.0
 
 
 clean:compiler_clean 
@@ -475,6 +477,7 @@ moc_detect2recognize.cpp: ../faceDemo/detect.h \
 		/usr/local/include/opencv2/contrib/contrib.hpp \
 		/usr/local/include/opencv2/contrib/retina.hpp \
 		/usr/local/include/opencv2/contrib/openfabmap.hpp \
+		../faceDemo/2dpcaface.h \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QButtonGroup \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qbuttongroup.h \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtCore/qobject.h \
@@ -621,6 +624,7 @@ moc_detect.cpp: /usr/local/include/opencv2/opencv.hpp \
 		/usr/local/include/opencv2/contrib/contrib.hpp \
 		/usr/local/include/opencv2/contrib/retina.hpp \
 		/usr/local/include/opencv2/contrib/openfabmap.hpp \
+		../faceDemo/2dpcaface.h \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QButtonGroup \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qbuttongroup.h \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtCore/qobject.h \
@@ -872,6 +876,7 @@ moc_recognize.cpp: ../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QDialog \
 		/usr/local/include/opencv2/contrib/contrib.hpp \
 		/usr/local/include/opencv2/contrib/retina.hpp \
 		/usr/local/include/opencv2/contrib/openfabmap.hpp \
+		../faceDemo/2dpcaface.h \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QButtonGroup \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qbuttongroup.h \
 		../faceDemo/recognize.h
@@ -930,6 +935,7 @@ main.o: ../faceDemo/main.cpp ../faceDemo/detect2recognize.h \
 		/usr/local/include/opencv2/contrib/contrib.hpp \
 		/usr/local/include/opencv2/contrib/retina.hpp \
 		/usr/local/include/opencv2/contrib/openfabmap.hpp \
+		../faceDemo/2dpcaface.h \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QButtonGroup \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qbuttongroup.h \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtCore/qobject.h \
@@ -1084,6 +1090,7 @@ detect2recognize.o: ../faceDemo/detect2recognize.cpp ../faceDemo/detect2recogniz
 		/usr/local/include/opencv2/contrib/contrib.hpp \
 		/usr/local/include/opencv2/contrib/retina.hpp \
 		/usr/local/include/opencv2/contrib/openfabmap.hpp \
+		../faceDemo/2dpcaface.h \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QButtonGroup \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qbuttongroup.h \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtCore/qobject.h \
@@ -1200,7 +1207,47 @@ detect2recognize.o: ../faceDemo/detect2recognize.cpp ../faceDemo/detect2recogniz
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qmainwindow.h \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qtabwidget.h \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtGui/qicon.h \
-		ui_detect2recognize.h
+		ui_detect2recognize.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtCore/QVariant \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QAction \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qaction.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qactiongroup.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QApplication \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qapplication.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtCore/qcoreapplication.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtCore/qeventloop.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qdesktopwidget.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtGui/qguiapplication.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtGui/qinputmethod.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QHeaderView \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qheaderview.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qabstractitemview.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qframe.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtCore/qabstractitemmodel.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtCore/qitemselectionmodel.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qstyleoption.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtGui/qvalidator.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtCore/qregularexpression.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qslider.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qabstractslider.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qstyle.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qtabbar.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qrubberband.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QMenu \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qmenu.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QMenuBar \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qmenubar.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QPushButton \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qpushbutton.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qabstractbutton.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QStatusBar \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qstatusbar.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QToolBar \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qtoolbar.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QWidget
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o detect2recognize.o ../faceDemo/detect2recognize.cpp
 
 detect.o: ../faceDemo/detect.cpp ../faceDemo/detect.h \
@@ -1231,6 +1278,7 @@ detect.o: ../faceDemo/detect.cpp ../faceDemo/detect.h \
 		/usr/local/include/opencv2/contrib/contrib.hpp \
 		/usr/local/include/opencv2/contrib/retina.hpp \
 		/usr/local/include/opencv2/contrib/openfabmap.hpp \
+		../faceDemo/2dpcaface.h \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QButtonGroup \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qbuttongroup.h \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtCore/qobject.h \
@@ -1343,6 +1391,49 @@ detect.o: ../faceDemo/detect.cpp ../faceDemo/detect.h \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtGui/qvector2d.h \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtGui/qtouchdevice.h \
 		ui_detect.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtCore/QVariant \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QAction \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qaction.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtGui/qicon.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qactiongroup.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QApplication \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qapplication.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtCore/qcoreapplication.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtCore/qeventloop.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qdesktopwidget.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtGui/qguiapplication.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtGui/qinputmethod.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QHeaderView \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qheaderview.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qabstractitemview.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qframe.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtCore/qabstractitemmodel.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtCore/qitemselectionmodel.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qstyleoption.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtGui/qvalidator.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtCore/qregularexpression.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qslider.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qabstractslider.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qstyle.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qtabbar.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qtabwidget.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qrubberband.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QLabel \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qlabel.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QLineEdit \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qlineedit.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtGui/qtextcursor.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtGui/qtextformat.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtGui/qpen.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtGui/qtextoption.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QPushButton \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qpushbutton.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qabstractbutton.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QRadioButton \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qradiobutton.h \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QMessageBox \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qmessagebox.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o detect.o ../faceDemo/detect.cpp
@@ -1485,12 +1576,78 @@ recognize.o: ../faceDemo/recognize.cpp ../faceDemo/recognize.h \
 		/usr/local/include/opencv2/contrib/contrib.hpp \
 		/usr/local/include/opencv2/contrib/retina.hpp \
 		/usr/local/include/opencv2/contrib/openfabmap.hpp \
+		../faceDemo/2dpcaface.h \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QButtonGroup \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qbuttongroup.h \
 		ui_recognize.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtCore/QVariant \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QAction \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qaction.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtGui/qicon.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qactiongroup.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QApplication \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qapplication.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtCore/qcoreapplication.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtCore/qeventloop.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qdesktopwidget.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtGui/qguiapplication.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtGui/qinputmethod.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QHeaderView \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qheaderview.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qabstractitemview.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qframe.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtCore/qabstractitemmodel.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtCore/qitemselectionmodel.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qstyleoption.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtGui/qvalidator.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtCore/qregularexpression.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qslider.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qabstractslider.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qstyle.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qtabbar.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qtabwidget.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qrubberband.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QLabel \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qlabel.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QPushButton \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qpushbutton.h \
+		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qabstractbutton.h \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QMessageBox \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/qmessagebox.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o recognize.o ../faceDemo/recognize.cpp
+
+2dpcaface.o: ../faceDemo/2dpcaface.cpp ../faceDemo/2dpcaface.h \
+		/usr/local/include/opencv2/opencv.hpp \
+		/usr/local/include/opencv2/core/core_c.h \
+		/usr/local/include/opencv2/core/types_c.h \
+		/usr/local/include/opencv2/core/core.hpp \
+		/usr/local/include/opencv2/core/version.hpp \
+		/usr/local/include/opencv2/core/operations.hpp \
+		/usr/local/include/opencv2/core/mat.hpp \
+		/usr/local/include/opencv2/flann/miniflann.hpp \
+		/usr/local/include/opencv2/flann/defines.h \
+		/usr/local/include/opencv2/flann/config.h \
+		/usr/local/include/opencv2/imgproc/imgproc_c.h \
+		/usr/local/include/opencv2/imgproc/types_c.h \
+		/usr/local/include/opencv2/imgproc/imgproc.hpp \
+		/usr/local/include/opencv2/photo/photo.hpp \
+		/usr/local/include/opencv2/photo/photo_c.h \
+		/usr/local/include/opencv2/video/video.hpp \
+		/usr/local/include/opencv2/video/tracking.hpp \
+		/usr/local/include/opencv2/video/background_segm.hpp \
+		/usr/local/include/opencv2/features2d/features2d.hpp \
+		/usr/local/include/opencv2/objdetect/objdetect.hpp \
+		/usr/local/include/opencv2/calib3d/calib3d.hpp \
+		/usr/local/include/opencv2/ml/ml.hpp \
+		/usr/local/include/opencv2/highgui/highgui_c.h \
+		/usr/local/include/opencv2/highgui/highgui.hpp \
+		/usr/local/include/opencv2/contrib/contrib.hpp \
+		/usr/local/include/opencv2/contrib/retina.hpp \
+		/usr/local/include/opencv2/contrib/openfabmap.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o 2dpcaface.o ../faceDemo/2dpcaface.cpp
 
 moc_detect2recognize.o: moc_detect2recognize.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_detect2recognize.o moc_detect2recognize.cpp
