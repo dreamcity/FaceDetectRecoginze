@@ -1,4 +1,0 @@
-../facedata/img001/cropface1.png;1
-../facedata/img001/cropface3.png;1
-../facedata/img001/cropface0.png;1
-../facedata/img001/cropface2.png;1
