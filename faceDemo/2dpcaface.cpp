@@ -68,7 +68,7 @@ void PCA2DFaces::train(InputArrayOfArrays _src, InputArray _local_labels)
     for (unsigned int i =0; i<numSamples; ++i)
     {
         //convert the orignial image CV_8UC1 to CV_32FC1
-        images[i].convertTo(images[i],CV_32FC1);
+        images[i].convertTo(images[i],CV_32F);
     }
     // get the mean of all the samples data
     for (unsigned int i = 0; i < numSamples; ++i)
