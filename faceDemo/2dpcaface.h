@@ -2,6 +2,9 @@
 #include "opencv2/opencv.hpp"
 #include "opencv2/core/core.hpp"
 #include "opencv2/contrib/contrib.hpp"
+#include "opencv2/objdetect/objdetect.hpp"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
 
 using namespace std;
 using namespace cv;
@@ -28,14 +31,14 @@ public:
     // Computes an Eigenfaces model with images in src and corresponding labels
     void train(InputArrayOfArrays src, InputArray labels);
      // Predicts the label of a query image in src.
-     int predict(InputArray src) const;
+    int predict(InputArray src) const;
 
-     void predict(InputArray _src, int &label, double &dist) const;
+    void predict(InputArray _src, int &label, double &dist) const;
     // See FaceRecognizer::load.
     void load(const FileStorage& fs);
 
     // See FaceRecognizer::save.
-     void save(FileStorage& fs) const;
+    void save(FileStorage& fs) const;
 
 
     //AlgorithmInfo* info() const;
@@ -43,6 +46,7 @@ public:
 };
 namespace cv
 {
+   // construct the class PCA2DFaces
    Ptr<FaceRecognizer> createPCA2DFaceRecognizer(int num_components =0);
 }
 

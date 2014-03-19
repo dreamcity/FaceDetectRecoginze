@@ -6,6 +6,7 @@ Recognize::Recognize(QWidget *parent) :
     ui(new Ui::Recognize)
 {
     ui->setupUi(this);
+    // load the classifier , support by the offical opencv
     face_cascade_name = "haarcascade_frontalface_alt.xml";
     indexperson=0;
 }
@@ -16,7 +17,9 @@ Recognize::~Recognize()
 }
 
 
-
+// see void Detect::on_recognize_clicked()
+// first load the traindata file, "traindata.xml"
+// call faceReg to relize the really function
 void Recognize::on_faceRecognizer_clicked()
 {
     indexperson=0;
@@ -31,15 +34,15 @@ void Recognize::on_faceRecognizer_clicked()
                                 ui->label5, ui->label7};
         QLabel *labelname[4] = {ui->label2, ui->label4,
                                 ui->label6, ui->label8};
-//        string str0("");
+        //  string str0("");
         Mat img;
         string str1("Person:");
         for(int i=0; i<4; i++)
         {
             QImage image = QImage((const uchar*)img.data, img.cols, img.rows, QImage::Format_RGB888).rgbSwapped();
             labelpic[i]->setPixmap(QPixmap::fromImage(image));
-            //labelpic[i]->setPixmap();
-//                    setText(str0.c_str());
+            // labelpic[i]->setPixmap();
+            // setText(str0.c_str());
             labelname[i]->setText(str1.c_str());
         }
 
@@ -65,6 +68,7 @@ void Recognize::on_faceRecognizer_clicked()
 
 }
 
+// void Detect::detectFace(Mat frame, vector<Rect>& faces)
 void Recognize::detectFace(Mat frame, vector<Rect>& faces)
 {
     if( !face_cascade.load( face_cascade_name ) )
@@ -85,14 +89,14 @@ void Recognize::detectFace(Mat frame, vector<Rect>& faces)
 }
 
 
-
+// void Detect::faceReg(const string& configfile,std::vector<Mat> showimages, std::vector<Mat> testimages)
 void Recognize::faceReg(const string& configfile,std::vector<Mat> showimages, std::vector<Mat> testimages)
 {
     Ptr<FaceRecognizer> model = createPCA2DFaceRecognizer(0);
     model->load(configfile);
 
-//    Ptr<FaceRecognizer> model = createEigenFaceRecognizer();
-//    model->load(configfile);
+    // Ptr<FaceRecognizer> model = createEigenFaceRecognizer();
+    // model->load(configfile);
 
     int predictedLabel;
     QLabel *labelpic[4]  = {ui->label1, ui->label3,
@@ -102,18 +106,18 @@ void Recognize::faceReg(const string& configfile,std::vector<Mat> showimages, st
     Mat imagetmp_rgb;
     for (uint i = 0; i < testimages.size(); ++i)
     {
-//        if(i>=4)
-//            break;
+        //  if(i>=4)
+        //      break;
         predictedLabel = model->predict(testimages[i]);
         imagetmp_rgb = showimages[i];
         cv::resize( imagetmp_rgb,  imagetmp_rgb, Size(120,120), 1, 1, CV_INTER_LINEAR);
 
         QImage image = QImage((const uchar*)imagetmp_rgb.data, imagetmp_rgb.cols, imagetmp_rgb.rows, QImage::Format_RGB888).rgbSwapped();
         labelpic[indexperson]->setPixmap(QPixmap::fromImage(image));
-//        string result_message = format("Person = %d  ", predictedLabel);
-//        labelname[indexperson]->setText(result_message.c_str());
+        // string result_message = format("Person = %d  ", predictedLabel);
+        // labelname[indexperson]->setText(result_message.c_str());
 
-        //**********************************
+
         MYSQL mysql;
         mysql_init(&mysql);
         if(!mysql_real_connect(&mysql, "localhost", "dreamcity","304031870", "FaceDetRec", 3306, NULL, 0))
@@ -146,6 +150,7 @@ void Recognize::faceReg(const string& configfile,std::vector<Mat> showimages, st
          indexperson=0;
 }
 
+// seevoid Detect::on_startCam_clicked()
 void Recognize::on_startCAM_clicked()
 {
     cap.open(0);

@@ -18,7 +18,9 @@ class Recognize : public QDialog
 
 public:
     explicit Recognize(QWidget *parent = 0);
+    // detect the face region, return a series reatanges
     void detectFace(Mat frame, vector<Rect> &faces);
+    // recognize the facedata;
     void faceReg(const string& configfile, std::vector<Mat> showimages, std::vector<Mat> testimages);
     ~Recognize();
 
