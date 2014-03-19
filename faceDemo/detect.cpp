@@ -364,22 +364,33 @@ void Detect::read_csv(const string& filename, vector<Mat>& images, vector<int>& 
 
 string Detect::faceTrain(std::vector<Mat> images,std::vector<int> labels)
 {
-
-    Ptr<FaceRecognizer> model = createEigenFaceRecognizer();
+    Ptr<FaceRecognizer> model = cv::createPCA2DFaceRecognizer(0);
+    //namedWindow("helloworld");
+    //imshow("helloworld",images[2]);
     model->train(images, labels);
     string configfile("../traindata.xml");
     model->save(configfile);
-//    cout<<"The train is complete!"<<endl;
     QMessageBox::information(NULL, "information", "The train is complete!");
     return configfile;
+
+
+
+//    Ptr<FaceRecognizer> model = createEigenFaceRecognizer();
+//    model->train(images, labels);
+//    string configfile("../traindata.xml");
+//    model->save(configfile);
+// //    cout<<"The train is complete!"<<endl;
+//    QMessageBox::information(NULL, "information", "The train is complete!");
+//    return configfile;
 }
 
 void Detect::faceReg(const string& configfile,std::vector<Mat> showimages, std::vector<Mat> testimages)
 {
-
-
-    Ptr<FaceRecognizer> model = createEigenFaceRecognizer();
+    Ptr<FaceRecognizer> model = createPCA2DFaceRecognizer(0);
     model->load(configfile);
+
+  //  Ptr<FaceRecognizer> model = createEigenFaceRecognizer();
+  //  model->load(configfile);
 
     int predictedLabel;
     Mat imagetmp_rgb;
@@ -390,6 +401,8 @@ void Detect::faceReg(const string& configfile,std::vector<Mat> showimages, std::
         imagetmp_rgb = showimages[i];
         cv::resize( imagetmp_rgb,  imagetmp_rgb, Size(200,200), 1, 1, CV_INTER_LINEAR);
         predictedLabel = model->predict(testimages[i]);
+       // predictedLabel = model->predict(testimages[i]);
+
         //cout<<"The face"<<i<<" recognize is complete!"<<endl;
 //        string result_message = format("Predicted Person = %d  ", predictedLabel);
         //QMessageBox::information(NULL, "information", result_message.c_str());

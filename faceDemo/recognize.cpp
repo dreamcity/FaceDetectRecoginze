@@ -88,9 +88,11 @@ void Recognize::detectFace(Mat frame, vector<Rect>& faces)
 
 void Recognize::faceReg(const string& configfile,std::vector<Mat> showimages, std::vector<Mat> testimages)
 {
-
-    Ptr<FaceRecognizer> model = createEigenFaceRecognizer();
+    Ptr<FaceRecognizer> model = createPCA2DFaceRecognizer(0);
     model->load(configfile);
+
+//    Ptr<FaceRecognizer> model = createEigenFaceRecognizer();
+//    model->load(configfile);
 
     int predictedLabel;
     QLabel *labelpic[4]  = {ui->label1, ui->label3,

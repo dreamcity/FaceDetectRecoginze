@@ -9,6 +9,7 @@
 #include "opencv2/imgproc/imgproc.hpp"
 
 #include "2dpcaface.h"
+
 #include <iostream>
 #include <cstdio>
 #include <sys/types.h>
@@ -20,6 +21,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <fstream>
+
 
 #include <mysql++/mysql++.h>
 #include <QButtonGroup>

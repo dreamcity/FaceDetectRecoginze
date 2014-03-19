@@ -2,7 +2,7 @@
 #include "opencv2/opencv.hpp"
 #include "opencv2/core/core.hpp"
 #include "opencv2/contrib/contrib.hpp"
-//#include "facerecognizer.hpp"
+
 using namespace std;
 using namespace cv;
 class PCA2DFaces : public FaceRecognizer
@@ -34,7 +34,7 @@ public:
     // See FaceRecognizer::load.
     void load(const FileStorage& fs);
 
-//    // See FaceRecognizer::save.
+    // See FaceRecognizer::save.
      void save(FileStorage& fs) const;
 
 
@@ -43,7 +43,7 @@ public:
 };
 namespace cv
 {
-    CV_EXPORTS_W Ptr<FaceRecognizer> PCA2DFaceRecognizer(int num_components);
+   Ptr<FaceRecognizer> createPCA2DFaceRecognizer(int num_components =0);
 }
 
 
