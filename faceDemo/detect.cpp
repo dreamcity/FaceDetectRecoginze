@@ -167,13 +167,16 @@ void Detect::detectFace(Mat frameface, vector<Rect>& faces)
         }
     }
     Rect imgface;
-//    imgface.x = faces[indexFace].x>50?(faces[indexFace].x-50):0;
-    imgface.x = faces[indexFace].x*0.5;
+    //imgface.x = faces[indexFace].x>50?(faces[indexFace].x-50):0;
+    imgface.x = faces[indexFace].x*0.1;
     cout<<"imgface.x:"<<imgface.x<<endl;
-//    imgface.y = faces[indexFace].y>50?(faces[indexFace].y-50):0;
-    imgface.y = faces[indexFace].y*0.5;
+    //imgface.y = faces[indexFace].y>50?(faces[indexFace].y-50):0;
+    imgface.y = faces[indexFace].y*0.1;
     cout<<"imgface.y:"<<imgface.y<<endl;
-
+    imgface.width = 350 - imgface.x;
+    cout<<"imgface.width:"<<imgface.width<<endl;
+    imgface.height = 350 - imgface.y;
+    cout<<"imgface.height:"<<imgface.height<<endl;
 //    if(imgface.x+1.5*faces[indexFace].width<400)
 //    {
 //        imgface.width = faces[indexFace].width *1.5;
@@ -192,12 +195,6 @@ void Detect::detectFace(Mat frameface, vector<Rect>& faces)
     }
 
 
- //   imgface.width = (faces[indexFace].width *1.5)?(faces[indexFace].width + 100):(400-imgface.x);
-//    imgface.width = faces[indexFace].width*1.5;
-    cout<<"imgface.width:"<<imgface.width<<endl;
-   // imgface.height = (faces[indexFace].height + imgface.y<300)?(faces[indexFace].height + 100):(400-imgface.y);
-    //imgface.height = faces[indexFace].height*1.5;
-    cout<<"imgface.height:"<<imgface.height<<endl;
 
     imageROI = frame(cv::Rect(imgface));
     namedWindow("hello");

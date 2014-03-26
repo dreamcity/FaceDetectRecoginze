@@ -82,7 +82,7 @@ public:
         label_cam->setObjectName(QStringLiteral("label_cam"));
         label_cam->setGeometry(QRect(0, 40, 400, 400));
         label_cam->setFrameShadow(QFrame::Plain);
-        label_cam->setAlignment(Qt::AlignCenter);
+        label_cam->setAlignment(Qt::AlignJustify|Qt::AlignVCenter);
         startCam = new QPushButton(Detect);
         startCam->setObjectName(QStringLiteral("startCam"));
         startCam->setGeometry(QRect(80, 460, 100, 25));
