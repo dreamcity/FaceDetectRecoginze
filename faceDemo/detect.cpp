@@ -125,12 +125,9 @@ void Detect::detectFace(Mat frameface, vector<Rect>& faces)
     }
     if(flag && (imageROI.rows*imageROI.cols>22500))
     {
-       frameface = imageROI;
+       frameface = imageROI; // get the ROI of face region
     }
-//    else
-//    {
 
-//    }
     Mat frame_gray;
     // convert the origin RGB img into GRAY
     cvtColor( frameface, frame_gray, CV_BGR2GRAY );
@@ -166,7 +163,7 @@ void Detect::detectFace(Mat frameface, vector<Rect>& faces)
             indexFace = i ;
         }
     }
-    Rect imgface;
+    Rect imgface; // the probably region of face
     //imgface.x = faces[indexFace].x>50?(faces[indexFace].x-50):0;
     imgface.x = faces[indexFace].x*0.1;
     cout<<"imgface.x:"<<imgface.x<<endl;
@@ -177,29 +174,26 @@ void Detect::detectFace(Mat frameface, vector<Rect>& faces)
     cout<<"imgface.width:"<<imgface.width<<endl;
     imgface.height = 350 - imgface.y;
     cout<<"imgface.height:"<<imgface.height<<endl;
-//    if(imgface.x+1.5*faces[indexFace].width<400)
-//    {
-//        imgface.width = faces[indexFace].width *1.5;
-//    }
-//    else
-    {
-        imgface.width = 350 - imgface.x;
-    }
-//    if(imgface.y+1.5*faces[indexFace].height<400)
-//    {
-//        imgface.height= faces[indexFace].height *1.5;
-//    }
-//    else
-    {
-        imgface.height = 350 - imgface.y;
-    }
-
-
-
-    imageROI = frame(cv::Rect(imgface));
+    //    if(imgface.x+1.5*faces[indexFace].width<400)
+    //    {
+    //        imgface.width = faces[indexFace].width *1.5;
+    //    }
+    //    else
+    //    {
+    //        imgface.width = 350 - imgface.x;
+    //    }
+    //    if(imgface.y+1.5*faces[indexFace].height<400)
+    //    {
+    //        imgface.height= faces[indexFace].height *1.5;
+    //    }
+    //    else
+    //    {
+    //        imgface.height = 350 - imgface.y;
+    //    }
+    imageROI = frame(cv::Rect(imgface)); // make the ROI region , serach this region at next time
     namedWindow("hello");
     imshow("hello", imageROI);
-    flag = true;
+    flag = true; // flag , decide whether the face has been detected first time
     }
 }
 
