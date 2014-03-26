@@ -68,7 +68,7 @@ void Recognize::on_faceRecognizer_clicked()
 
 }
 
-// void Detect::detectFace(Mat frame, vector<Rect>& faces)
+//see void Detect::detectFace(Mat frame, vector<Rect>& faces)
 void Recognize::detectFace(Mat frame, vector<Rect>& faces)
 {
     if( !face_cascade.load( face_cascade_name ) )
@@ -89,7 +89,7 @@ void Recognize::detectFace(Mat frame, vector<Rect>& faces)
 }
 
 
-// void Detect::faceReg(const string& configfile,std::vector<Mat> showimages, std::vector<Mat> testimages)
+//see void Detect::faceReg(const string& configfile,std::vector<Mat> showimages, std::vector<Mat> testimages)
 void Recognize::faceReg(const string& configfile,std::vector<Mat> showimages, std::vector<Mat> testimages)
 {
     Ptr<FaceRecognizer> model = createPCA2DFaceRecognizer(0);
@@ -150,7 +150,7 @@ void Recognize::faceReg(const string& configfile,std::vector<Mat> showimages, st
          indexperson=0;
 }
 
-// seevoid Detect::on_startCam_clicked()
+// see void Detect::on_startCam_clicked()
 void Recognize::on_startCAM_clicked()
 {
     cap.open(0);

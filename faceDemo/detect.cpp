@@ -19,6 +19,8 @@ Detect::Detect(QWidget *parent) :
     // load the classifier , support by the offical opencv
     face_cascade_name = "haarcascade_frontalface_alt.xml";
 
+    flag = false;
+
 }
 
 Detect::~Detect()
@@ -92,7 +94,7 @@ void Detect::on_takePic_clicked()
         // resize crop to cropface(120,120)
         cv::resize(crop, cropface, Size(120,120), 1, 1, CV_INTER_LINEAR);
 
-        QImage image = QImage((const uchar*)cropface.data, cropface.cols, cropface.rows, QImage::Format_RGB888).rgbSwapped();        
+        QImage image = QImage((const uchar*)cropface.data, cropface.cols, cropface.rows, QImage::Format_RGB888).rgbSwapped();
         QLabel *label[9]={ui->label1, ui->label2, ui->label3,
                           ui->label4, ui->label5, ui->label6,
                           ui->label7, ui->label8, ui->label9};
@@ -113,7 +115,7 @@ void Detect::on_takePic_clicked()
 //realize the facedetect()
 //input Mat
 //output vector<Rect>
-void Detect::detectFace(Mat frame, vector<Rect>& faces)
+void Detect::detectFace(Mat frameface, vector<Rect>& faces)
 {
     //before detectface , make sure load the classifier  successfully
     if( !face_cascade.load( face_cascade_name ) )
@@ -121,21 +123,86 @@ void Detect::detectFace(Mat frame, vector<Rect>& faces)
         QMessageBox::critical(NULL, "critical", "--(!)Error loading!",QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
         exit(0);
     }
+    if(flag && (imageROI.rows*imageROI.cols>22500))
+    {
+       frameface = imageROI;
+    }
+//    else
+//    {
 
+//    }
     Mat frame_gray;
     // convert the origin RGB img into GRAY
-    cvtColor( frame, frame_gray, CV_BGR2GRAY );
+    cvtColor( frameface, frame_gray, CV_BGR2GRAY );
     // equalize the gray img
     equalizeHist( frame_gray, frame_gray );
 
     // call detectMultiScale(), return a series rectange region means face;
     face_cascade.detectMultiScale( frame_gray, faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, Size(30, 30) );
     // use a rectange to get the face region
+//    for( uint i = 0; i < faces.size(); i++ )
+//    {
+//        Point pt1(faces[i].x,faces[i].y);
+//        Point pt2(faces[i].x+faces[i].width,faces[i].y+faces[i].height);
+//        rectangle(frame,pt1,pt2,CV_RGB(0,255,0),3,2,0);
+//    }
+
+    // set the only one face in the sight, the bigest one!
+   // if(faces.size())
+    {
+    uint indexFace =0;
+    double RectSize = faces[indexFace].width*faces[indexFace].height;
+    double tempSize;
     for( uint i = 0; i < faces.size(); i++ )
     {
         Point pt1(faces[i].x,faces[i].y);
         Point pt2(faces[i].x+faces[i].width,faces[i].y+faces[i].height);
         rectangle(frame,pt1,pt2,CV_RGB(0,255,0),3,2,0);
+
+        tempSize = faces[i].width*faces[i].height;
+        if(RectSize <= tempSize)
+        {
+            RectSize = tempSize;
+            indexFace = i ;
+        }
+    }
+    Rect imgface;
+//    imgface.x = faces[indexFace].x>50?(faces[indexFace].x-50):0;
+    imgface.x = faces[indexFace].x*0.5;
+    cout<<"imgface.x:"<<imgface.x<<endl;
+//    imgface.y = faces[indexFace].y>50?(faces[indexFace].y-50):0;
+    imgface.y = faces[indexFace].y*0.5;
+    cout<<"imgface.y:"<<imgface.y<<endl;
+
+//    if(imgface.x+1.5*faces[indexFace].width<400)
+//    {
+//        imgface.width = faces[indexFace].width *1.5;
+//    }
+//    else
+    {
+        imgface.width = 350 - imgface.x;
+    }
+//    if(imgface.y+1.5*faces[indexFace].height<400)
+//    {
+//        imgface.height= faces[indexFace].height *1.5;
+//    }
+//    else
+    {
+        imgface.height = 350 - imgface.y;
+    }
+
+
+ //   imgface.width = (faces[indexFace].width *1.5)?(faces[indexFace].width + 100):(400-imgface.x);
+//    imgface.width = faces[indexFace].width*1.5;
+    cout<<"imgface.width:"<<imgface.width<<endl;
+   // imgface.height = (faces[indexFace].height + imgface.y<300)?(faces[indexFace].height + 100):(400-imgface.y);
+    //imgface.height = faces[indexFace].height*1.5;
+    cout<<"imgface.height:"<<imgface.height<<endl;
+
+    imageROI = frame(cv::Rect(imgface));
+    namedWindow("hello");
+    imshow("hello", imageROI);
+    flag = true;
     }
 }
 
