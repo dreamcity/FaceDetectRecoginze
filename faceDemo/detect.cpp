@@ -172,8 +172,10 @@ void Detect::detectFace(Mat frameface, vector<Rect>& faces)
     cout<<"imgface.y:"<<imgface.y<<endl;
     imgface.width = 350 - imgface.x;
     cout<<"imgface.width:"<<imgface.width<<endl;
+    cout<<"faces[indexFace].width:"<<faces[indexFace].width<<endl;
     imgface.height = 350 - imgface.y;
     cout<<"imgface.height:"<<imgface.height<<endl;
+    cout<<"faces[indexFace].height:"<<faces[indexFace].height<<endl;
     //    if(imgface.x+1.5*faces[indexFace].width<400)
     //    {
     //        imgface.width = faces[indexFace].width *1.5;
@@ -191,8 +193,8 @@ void Detect::detectFace(Mat frameface, vector<Rect>& faces)
     //        imgface.height = 350 - imgface.y;
     //    }
     imageROI = frame(cv::Rect(imgface)); // make the ROI region , serach this region at next time
-    namedWindow("hello");
-    imshow("hello", imageROI);
+    namedWindow("faceROIRegion");
+    imshow("faceROIRegion", imageROI);
     flag = true; // flag , decide whether the face has been detected first time
     }
 }
