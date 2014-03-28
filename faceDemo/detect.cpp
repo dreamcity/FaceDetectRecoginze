@@ -532,10 +532,10 @@ void Detect::faceReg(const string& configfile,std::vector<Mat> showimages, std::
     Ptr<FaceRecognizer> model = createPCA2DFaceRecognizer(0);
     model->load(configfile);
 
-    //  Ptr<FaceRecognizer> model = createEigenFaceRecognizer();
-    //  model->load(configfile);
+//      Ptr<FaceRecognizer> model = createEigenFaceRecognizer();
+//      model->load(configfile);
 
-    int predictedLabel;
+    int predictedLabel = -1;
     Mat imagetmp_rgb;
     for (uint i = 0; i < testimages.size(); ++i)
     {
@@ -545,8 +545,10 @@ void Detect::faceReg(const string& configfile,std::vector<Mat> showimages, std::
         imagetmp_rgb = showimages[i];
         cv::resize( imagetmp_rgb,  imagetmp_rgb, Size(200,200), 1, 1, CV_INTER_LINEAR);
         // get the predictLabel of predict
+        predictedLabel = -1;
+        cout<<"predictedLabel0:"<<predictedLabel<<endl;
         predictedLabel = model->predict(testimages[i]);
-
+        cout<<"predictedLabel1:"<<predictedLabel<<endl;
         //cout<<"The face"<<i<<" recognize is complete!"<<endl;
         // string result_message = format("Predicted Person = %d  ", predictedLabel);
         //QMessageBox::information(NULL, "information", result_message.c_str());

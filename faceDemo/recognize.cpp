@@ -95,10 +95,10 @@ void Recognize::faceReg(const string& configfile,std::vector<Mat> showimages, st
     Ptr<FaceRecognizer> model = createPCA2DFaceRecognizer(0);
     model->load(configfile);
 
-    // Ptr<FaceRecognizer> model = createEigenFaceRecognizer();
-    // model->load(configfile);
+//     Ptr<FaceRecognizer> model = createEigenFaceRecognizer();
+//     model->load(configfile);
 
-    int predictedLabel;
+    int predictedLabel = -1;
     QLabel *labelpic[4]  = {ui->label1, ui->label3,
                             ui->label5, ui->label7};
     QLabel *labelname[4] = {ui->label2, ui->label4,
