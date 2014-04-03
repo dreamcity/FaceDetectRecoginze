@@ -166,16 +166,16 @@ void Detect::detectFace(Mat frameface, vector<Rect>& faces)
     Rect imgface; // the probably region of face
     //imgface.x = faces[indexFace].x>50?(faces[indexFace].x-50):0;
     imgface.x = faces[indexFace].x*0.1;
-    cout<<"imgface.x:"<<imgface.x<<endl;
+ //   cout<<"imgface.x:"<<imgface.x<<endl;
     //imgface.y = faces[indexFace].y>50?(faces[indexFace].y-50):0;
     imgface.y = faces[indexFace].y*0.1;
-    cout<<"imgface.y:"<<imgface.y<<endl;
+ //   cout<<"imgface.y:"<<imgface.y<<endl;
     imgface.width = 350 - imgface.x;
-    cout<<"imgface.width:"<<imgface.width<<endl;
-    cout<<"faces[indexFace].width:"<<faces[indexFace].width<<endl;
+//    cout<<"imgface.width:"<<imgface.width<<endl;
+//    cout<<"faces[indexFace].width:"<<faces[indexFace].width<<endl;
     imgface.height = 350 - imgface.y;
-    cout<<"imgface.height:"<<imgface.height<<endl;
-    cout<<"faces[indexFace].height:"<<faces[indexFace].height<<endl;
+//    cout<<"imgface.height:"<<imgface.height<<endl;
+ //   cout<<"faces[indexFace].height:"<<faces[indexFace].height<<endl;
     //    if(imgface.x+1.5*faces[indexFace].width<400)
     //    {
     //        imgface.width = faces[indexFace].width *1.5;

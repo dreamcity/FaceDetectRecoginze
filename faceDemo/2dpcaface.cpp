@@ -46,9 +46,12 @@ void PCA2DFaces::train(InputArrayOfArrays _src, InputArray _local_labels)
     
     // get the  numberof samples
     vector<Mat> images;
+  //  vector<Mat> labelstemp;
     Mat labels = _local_labels.getMat(); // vector<int> labels
+    //cout<<"labels.data:"<<labels.total()<<endl;
     _src.getMatVector(images); // vector<Mat> images
-
+ //   _local_labels.getMatVector(labelstemp);
+//    _local_labels.getMatVector(labels);
     unsigned int numSamples=images.size(); // the total number of all samples
     
     // matrix (m x n)
@@ -91,7 +94,7 @@ void PCA2DFaces::train(InputArrayOfArrays _src, InputArray _local_labels)
     // compute the eigenvalue on the Cov Matrix
     eigen( Covariance, _eigenvalues, _eigenvectors );
     transpose(_eigenvectors, _eigenvectors); // eigenvectors by column
-    _labels = labels.clone();
+   // _labels = labels.clone();
 
     // eigenvalues – output vector of eigenvalues of the same type as src;
     //   the eigenvalues are stored in the descending order.
@@ -100,6 +103,7 @@ void PCA2DFaces::train(InputArrayOfArrays _src, InputArray _local_labels)
     //   it has the same size and type as src; the eigenvectors are stored as subsequent matrix rows,
     //   in the same order as the corresponding  eigenvalues
 
+    _labels = labels.clone();
     // deal all the samples
     for(unsigned int sampleIdx = 0; sampleIdx < numSamples; sampleIdx++)
     {
@@ -119,7 +123,9 @@ void PCA2DFaces::train(InputArrayOfArrays _src, InputArray _local_labels)
         ProjectData = images[sampleIdx]*ProjectMatrix;
         // prepare to write in the .xml file
         _projections.push_back(ProjectData);
+       // _labels.push_back(_labels)
     }
+
 }
 // FaceRecognizer::save(const string& filename) -- > PCA2DFaces::save(FileStorage& fs)
 void FaceRecognizer::save(const string& filename) const
