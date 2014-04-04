@@ -550,7 +550,7 @@ void Detect::read_csv(const string& filename, vector<Mat>& images, vector<int>& 
 // then train it, get the traindatafile.xml
 string Detect::faceTrain(std::vector<Mat> images,std::vector<int> labels)
 {
-    Ptr<FaceRecognizer> model = cv::createPCA2DFaceRecognizer(0);
+    Ptr<FaceRecognizer> model = cv::createPCA2DFaceRecognizer(2);
     // call the PCA2DFaces::train()
     // using the 2DPCA AGL
     model->train(images, labels);
@@ -567,13 +567,13 @@ string Detect::faceTrain(std::vector<Mat> images,std::vector<int> labels)
     // support by the opencv offical! And it can work perfect
     //*******************
     //
-    //    Ptr<FaceRecognizer> model = createEigenFaceRecognizer();
-    //    model->train(images, labels);
-    //    string configfile("../traindata.xml");
-    //    model->save(configfile);
-    //    // cout<<"The train is complete!"<<endl;
-    //    QMessageBox::information(NULL, "information", "The train is complete!");
-    //    return configfile;
+//        Ptr<FaceRecognizer> model = createEigenFaceRecognizer();
+//        model->train(images, labels);
+//        string configfile("../traindata.xml");
+//        model->save(configfile);
+//        // cout<<"The train is complete!"<<endl;
+//        QMessageBox::information(NULL, "information", "The train is complete!");
+//        return configfile;
     //*************************************************************
 }
 
@@ -589,11 +589,11 @@ string Detect::faceTrain(std::vector<Mat> images,std::vector<int> labels)
 // last select the label from database and show it on the textlabels
 void Detect::faceReg(const string& configfile,std::vector<Mat> showimages, std::vector<Mat> testimages)
 {
-    Ptr<FaceRecognizer> model = createPCA2DFaceRecognizer(0);
+    Ptr<FaceRecognizer> model = createPCA2DFaceRecognizer(2);
     model->load(configfile);
 
-    //  Ptr<FaceRecognizer> model = createEigenFaceRecognizer();
-    //  model->load(configfile);
+//      Ptr<FaceRecognizer> model = createEigenFaceRecognizer();
+//      model->load(configfile);
 
     int predictedLabel;
     Mat imagetmp_rgb;
