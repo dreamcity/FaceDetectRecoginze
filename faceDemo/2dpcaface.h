@@ -15,6 +15,7 @@ private:
     int _num_components;
     double _threshold;
     vector<Mat> _projections;
+//    vector<int> _labels;
     Mat _labels;
     Mat _eigenvectors;
     Mat _eigenvalues;
@@ -30,6 +31,7 @@ public:
 
     // Computes an Eigenfaces model with images in src and corresponding labels
     void train(InputArrayOfArrays src, InputArray labels);
+//    void train(InputArrayOfArrays _src, vector<int> _local_labels);
      // Predicts the label of a query image in src.
     int predict(InputArray src) const;
 

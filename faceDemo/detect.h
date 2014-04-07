@@ -42,7 +42,7 @@ class Detect : public QDialog
 public:
     explicit Detect(QWidget *parent = 0);
     // detect the face region, return a series reatanges
-    void detectFace(Mat frame, vector<Rect> &faces);
+    void detectFace(Mat frameface, vector<Rect> &faces);
     // createImgDataFile , save the imgdatafile in the imgfilepath
     void createImgDataFile(const char* imgfilepath, const char* imgdatafile);
     // save the peoples infomation in the mysql dadabase;
@@ -90,6 +90,10 @@ private:
     CascadeClassifier face_cascade;
     // the  rectangle region of face, detect by the classifier
     vector<Rect> faces;
+    //*********************************
+    Mat imageROI;
+    bool flag; //the flag of detect called, when it called ,it turn 1;
+    //***************************
     // the face database .xml file
     // sames as KEY<----->VALUE
     //          img-------label

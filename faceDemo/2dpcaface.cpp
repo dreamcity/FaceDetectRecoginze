@@ -46,9 +46,12 @@ void PCA2DFaces::train(InputArrayOfArrays _src, InputArray _local_labels)
     
     // get the  numberof samples
     vector<Mat> images;
+  //  vector<Mat> labelstemp;
     Mat labels = _local_labels.getMat(); // vector<int> labels
+    //cout<<"labels.data:"<<labels.total()<<endl;
     _src.getMatVector(images); // vector<Mat> images
-
+ //   _local_labels.getMatVector(labelstemp);
+//    _local_labels.getMatVector(labels);
     unsigned int numSamples=images.size(); // the total number of all samples
     
     // matrix (m x n)
@@ -56,9 +59,7 @@ void PCA2DFaces::train(InputArrayOfArrays _src, InputArray _local_labels)
     int m = image.rows;
     int n = image.cols;
 
-    // clear existing model data
-    _labels.release();
-    _projections.clear();
+
     // clip number of components to be valid
     if((_num_components <= 0) || (_num_components > n))
         _num_components = n;  // all the components
@@ -91,7 +92,8 @@ void PCA2DFaces::train(InputArrayOfArrays _src, InputArray _local_labels)
     // compute the eigenvalue on the Cov Matrix
     eigen( Covariance, _eigenvalues, _eigenvectors );
     transpose(_eigenvectors, _eigenvectors); // eigenvectors by column
-    _labels = labels.clone();
+
+   // _labels = labels.clone();
 
     // eigenvalues – output vector of eigenvalues of the same type as src;
     //   the eigenvalues are stored in the descending order.
@@ -99,7 +101,11 @@ void PCA2DFaces::train(InputArrayOfArrays _src, InputArray _local_labels)
     // eigenvectors – output matrix of eigenvectors;
     //   it has the same size and type as src; the eigenvectors are stored as subsequent matrix rows,
     //   in the same order as the corresponding  eigenvalues
+    // clear existing model data
+    _labels.release();
+    _projections.clear();
 
+    _labels = labels.clone();
     // deal all the samples
     for(unsigned int sampleIdx = 0; sampleIdx < numSamples; sampleIdx++)
     {
@@ -111,15 +117,19 @@ void PCA2DFaces::train(InputArrayOfArrays _src, InputArray _local_labels)
         Mat ProjectMatrix = Mat::zeros(n, dimSpace, CV_32FC1);
         for (unsigned int i = 0; i < dimSpace; ++i)
         {
-            ProjectMatrix.col(i) = _eigenvectors.col(i);
+//            ProjectMatrix.col(i) = _eigenvectors.col(i);
+            _eigenvectors.col(i).copyTo(ProjectMatrix.col(i));
         }
         // X = ProjectData;
-        Mat ProjectData = Mat::zeros(m, dimSpace, CV_32FC1);
+        Mat ProjectData = Mat::zeros(n, dimSpace, CV_32FC1);
         // Y = ProjectData;
+//        ProjectData = ProjectMatrix;
         ProjectData = images[sampleIdx]*ProjectMatrix;
         // prepare to write in the .xml file
         _projections.push_back(ProjectData);
+       // _labels.push_back(_labels)
     }
+
 }
 // FaceRecognizer::save(const string& filename) -- > PCA2DFaces::save(FileStorage& fs)
 void FaceRecognizer::save(const string& filename) const
@@ -169,7 +179,7 @@ void PCA2DFaces::load(const FileStorage& fs)
 void PCA2DFaces::predict(InputArray _src, int &minClass, double &minDist) const
 {
     minClass = -1;
-    minDist = 150;
+    minDist = 150; // nothing to use;
     predict(_src);
 }
 //******************************************
@@ -191,26 +201,36 @@ int PCA2DFaces::predict(InputArray _src) const
 
     for (unsigned int i = 0; i < dimSpace; ++i)
     {
-        ProjectMatrix.col(i) = _eigenvectors.col(i);
+//        ProjectMatrix.col(i) = _eigenvectors.col(i);
+         _eigenvectors.col(i).copyTo(ProjectMatrix.col(i));
     }
     // X = ProjectData;
     Mat ProjectData = Mat::zeros(m, dimSpace, CV_32FC1);
     // Y = ProjectData;
     ProjectData = src*ProjectMatrix;
 
-    // initialize the default class equal -1 ,means nothing
-    int minClass = -1;  
+    // initialize the default class equal 1
+    int  minClass = _labels.at<int>((int)0);
+    cout<<"minClass:"<<minClass<<endl;
     double minDist = norm(_projections[0], ProjectData, NORM_L2); // get the Euclidean distance
+    cout<<"minDist:"<<minDist<<endl;
     // get the shortest distance and get the class label
     // it means predict result
+    cout<<" _projections.size="<< _projections.size()<<endl;
     for(size_t sampleIdx = 0; sampleIdx < _projections.size(); sampleIdx++)
     {
         double dist = norm(_projections[sampleIdx], ProjectData, NORM_L2);
+        cout<<"Dist:"<<sampleIdx<<":"<<dist<<endl;
+       // cout<<"minDist:"<<minDist<<endl;
         if((dist <= minDist) )
         {
+
             minDist = dist;
+            cout<<"minDist:"<<minDist<<endl;
             minClass = _labels.at<int>((int)sampleIdx);
+            cout<<"minClass:"<<minClass<<endl;
         }
+
     }
     return minClass;
 }
