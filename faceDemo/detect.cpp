@@ -19,6 +19,8 @@ Detect::Detect(QWidget *parent) :
     // load the classifier , support by the offical opencv
     face_cascade_name = "haarcascade_frontalface_alt.xml";
 
+    flag = false;
+
 }
 
 Detect::~Detect()
@@ -92,7 +94,7 @@ void Detect::on_takePic_clicked()
         // resize crop to cropface(120,120)
         cv::resize(crop, cropface, Size(120,120), 1, 1, CV_INTER_LINEAR);
 
-        QImage image = QImage((const uchar*)cropface.data, cropface.cols, cropface.rows, QImage::Format_RGB888).rgbSwapped();        
+        QImage image = QImage((const uchar*)cropface.data, cropface.cols, cropface.rows, QImage::Format_RGB888).rgbSwapped();
         QLabel *label[9]={ui->label1, ui->label2, ui->label3,
                           ui->label4, ui->label5, ui->label6,
                           ui->label7, ui->label8, ui->label9};
@@ -113,7 +115,7 @@ void Detect::on_takePic_clicked()
 //realize the facedetect()
 //input Mat
 //output vector<Rect>
-void Detect::detectFace(Mat frame, vector<Rect>& faces)
+void Detect::detectFace(Mat frameface, vector<Rect>& faces)
 {
     //before detectface , make sure load the classifier  successfully
     if( !face_cascade.load( face_cascade_name ) )
@@ -121,21 +123,79 @@ void Detect::detectFace(Mat frame, vector<Rect>& faces)
         QMessageBox::critical(NULL, "critical", "--(!)Error loading!",QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
         exit(0);
     }
+    if(flag && (imageROI.rows*imageROI.cols>22500))
+    {
+       frameface = imageROI; // get the ROI of face region
+    }
 
     Mat frame_gray;
     // convert the origin RGB img into GRAY
-    cvtColor( frame, frame_gray, CV_BGR2GRAY );
+    cvtColor( frameface, frame_gray, CV_BGR2GRAY );
     // equalize the gray img
     equalizeHist( frame_gray, frame_gray );
 
     // call detectMultiScale(), return a series rectange region means face;
     face_cascade.detectMultiScale( frame_gray, faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, Size(30, 30) );
     // use a rectange to get the face region
+//    for( uint i = 0; i < faces.size(); i++ )
+//    {
+//        Point pt1(faces[i].x,faces[i].y);
+//        Point pt2(faces[i].x+faces[i].width,faces[i].y+faces[i].height);
+//        rectangle(frame,pt1,pt2,CV_RGB(0,255,0),3,2,0);
+//    }
+
+    // set the only one face in the sight, the bigest one!
+   // if(faces.size())
+    {
+    uint indexFace =0;
+    double RectSize = faces[indexFace].width*faces[indexFace].height;
+    double tempSize;
     for( uint i = 0; i < faces.size(); i++ )
     {
         Point pt1(faces[i].x,faces[i].y);
         Point pt2(faces[i].x+faces[i].width,faces[i].y+faces[i].height);
         rectangle(frame,pt1,pt2,CV_RGB(0,255,0),3,2,0);
+
+        tempSize = faces[i].width*faces[i].height;
+        if(RectSize <= tempSize)
+        {
+            RectSize = tempSize;
+            indexFace = i ;
+        }
+    }
+    Rect imgface; // the probably region of face
+    //imgface.x = faces[indexFace].x>50?(faces[indexFace].x-50):0;
+    imgface.x = faces[indexFace].x*0.1;
+ //   cout<<"imgface.x:"<<imgface.x<<endl;
+    //imgface.y = faces[indexFace].y>50?(faces[indexFace].y-50):0;
+    imgface.y = faces[indexFace].y*0.1;
+ //   cout<<"imgface.y:"<<imgface.y<<endl;
+    imgface.width = 350 - imgface.x;
+//    cout<<"imgface.width:"<<imgface.width<<endl;
+//    cout<<"faces[indexFace].width:"<<faces[indexFace].width<<endl;
+    imgface.height = 350 - imgface.y;
+//    cout<<"imgface.height:"<<imgface.height<<endl;
+ //   cout<<"faces[indexFace].height:"<<faces[indexFace].height<<endl;
+    //    if(imgface.x+1.5*faces[indexFace].width<400)
+    //    {
+    //        imgface.width = faces[indexFace].width *1.5;
+    //    }
+    //    else
+    //    {
+    //        imgface.width = 350 - imgface.x;
+    //    }
+    //    if(imgface.y+1.5*faces[indexFace].height<400)
+    //    {
+    //        imgface.height= faces[indexFace].height *1.5;
+    //    }
+    //    else
+    //    {
+    //        imgface.height = 350 - imgface.y;
+    //    }
+    imageROI = frame(cv::Rect(imgface)); // make the ROI region , serach this region at next time
+    namedWindow("faceROIRegion");
+    imshow("faceROIRegion", imageROI);
+    flag = true; // flag , decide whether the face has been detected first time
     }
 }
 
@@ -490,7 +550,7 @@ void Detect::read_csv(const string& filename, vector<Mat>& images, vector<int>& 
 // then train it, get the traindatafile.xml
 string Detect::faceTrain(std::vector<Mat> images,std::vector<int> labels)
 {
-    Ptr<FaceRecognizer> model = cv::createPCA2DFaceRecognizer(0);
+    Ptr<FaceRecognizer> model = cv::createPCA2DFaceRecognizer(2);
     // call the PCA2DFaces::train()
     // using the 2DPCA AGL
     model->train(images, labels);
@@ -507,13 +567,13 @@ string Detect::faceTrain(std::vector<Mat> images,std::vector<int> labels)
     // support by the opencv offical! And it can work perfect
     //*******************
     //
-    //    Ptr<FaceRecognizer> model = createEigenFaceRecognizer();
-    //    model->train(images, labels);
-    //    string configfile("../traindata.xml");
-    //    model->save(configfile);
-    //    // cout<<"The train is complete!"<<endl;
-    //    QMessageBox::information(NULL, "information", "The train is complete!");
-    //    return configfile;
+//        Ptr<FaceRecognizer> model = createEigenFaceRecognizer();
+//        model->train(images, labels);
+//        string configfile("../traindata.xml");
+//        model->save(configfile);
+//        // cout<<"The train is complete!"<<endl;
+//        QMessageBox::information(NULL, "information", "The train is complete!");
+//        return configfile;
     //*************************************************************
 }
 
@@ -529,11 +589,11 @@ string Detect::faceTrain(std::vector<Mat> images,std::vector<int> labels)
 // last select the label from database and show it on the textlabels
 void Detect::faceReg(const string& configfile,std::vector<Mat> showimages, std::vector<Mat> testimages)
 {
-    Ptr<FaceRecognizer> model = createPCA2DFaceRecognizer(0);
+    Ptr<FaceRecognizer> model = createPCA2DFaceRecognizer(2);
     model->load(configfile);
 
-    //  Ptr<FaceRecognizer> model = createEigenFaceRecognizer();
-    //  model->load(configfile);
+//      Ptr<FaceRecognizer> model = createEigenFaceRecognizer();
+//      model->load(configfile);
 
     int predictedLabel;
     Mat imagetmp_rgb;
