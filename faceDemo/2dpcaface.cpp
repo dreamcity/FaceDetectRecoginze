@@ -186,7 +186,9 @@ void PCA2DFaces::train(InputArrayOfArrays _src, InputArray _local_labels)
     _num_pca_coms = n-C;
     _eigenvalues = ldaAGL.getValues();
     _eigenvectorslda = ldaAGL.getVectors();
-   // _mean = ldaAGL.getMean();
+    _mean = ldaAGL.getMean();
+     cout<<"_mean:"<<_mean.rows<<endl;
+     cout<<"_mean:"<<_mean.cols<<endl;
     _projections = ldaAGL.getProjections();
 
 }

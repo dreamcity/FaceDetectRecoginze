@@ -4,7 +4,7 @@ using namespace std;
 
 LDAT::LDAT(int num )
 {
-   num_components = num;
+   _num_components = num;
 }
 
 LDAT::LDAT()
@@ -29,28 +29,28 @@ inline vector<_Tp> remove_dups(const vector<_Tp>& src) {
 
 int LDAT::getComponents()
 {
-    return  num_components;
+    return  _num_components;
 }
 
 Mat LDAT::getVectors()
 {
-    return eigenvectors;
+    return _eigenvectors;
 }
 Mat LDAT::getMean()
 {
-    return meanTotal;
+    return _meanTotal;
 }
 
 Mat LDAT::getValues()
 {
-    return eigenvalues;
+    return _eigenvalues;
 }
 
 
 
 vector<Mat> LDAT::getProjections()
 {
-    return projections;
+    return _projections;
 }
 
 
@@ -98,8 +98,8 @@ void LDAT::lda(InputArrayOfArrays _src, InputArray _lbls)
     }
 
     // clip number of components to be a valid number
-    if ((num_components <= 0) || (num_components > (C - 1))) {
-        num_components = (C - 1);
+    if ((_num_components <= 0) || (_num_components > (C - 1))) {
+        _num_components = (C - 1);
     }
 
     Mat meanTotal = Mat::zeros(m, n, image.type());
@@ -129,7 +129,7 @@ void LDAT::lda(InputArrayOfArrays _src, InputArray _lbls)
 
     // calculate total mean
     meanTotal.convertTo(meanTotal, meanTotal.type(), 1.0 / static_cast<double> (numSamples));
-
+    meanTotal.copyTo(_meanTotal);
     // calculate class means
     for (int i = 0; i < C; ++i)
     {
@@ -173,35 +173,34 @@ void LDAT::lda(InputArrayOfArrays _src, InputArray _lbls)
     Mat M;
     gemm(Swi, Sb, 1.0, Mat(), 0.0, M);
 
-    eigen( M, eigenvalues, eigenvectors );
+    eigen( M, _eigenvalues, _eigenvectors );
 
-    transpose(eigenvectors, eigenvectors); // eigenvectors by column
-    cout<<"eigenvectors.rows"<<eigenvectors.rows<<endl;
-    cout<<"eigenvectors.cols"<<eigenvectors.cols<<endl;
+    transpose(_eigenvectors, _eigenvectors); // _eigenvectors by column
+    //  cout<<"_eigenvectors.rows"<<_eigenvectors.rows<<endl;
+    //  cout<<"_eigenvectors.cols"<<_eigenvectors.cols<<endl;
     // _labels.release();
-    // _projections.clear();
+    // __projections.clear();
 
     // _labels = labelsmat.clone();
     // deal all the samples
     for(unsigned int sampleIdx = 0; sampleIdx < numSamples; sampleIdx++)
     {
-        unsigned int dimSpace = num_components; // num of components
+        unsigned int dimSpace = _num_components; // num of components
 
-        // choose the bigest dimSpace eigenvectors as the backproject matrix
+        // choose the bigest dimSpace _eigenvectors as the backproject matrix
         // i.e BackprojectMatrix X={X(0),X(1),...X(dimSpace)}
         // Y=AX, Y denote the matrix after backproject
         Mat ProjectMatrix = Mat::zeros(n, dimSpace, image.type());
         for (unsigned int i = 0; i < dimSpace; ++i)
         {
-            eigenvectors.col(i).copyTo(ProjectMatrix.col(i));
-//            _eigenvectorslda.col(i).copyTo(ProjectMatrixlda.col(i));
+            _eigenvectors.col(i).copyTo(ProjectMatrix.col(i));
         }
         // X = ProjectData;
         Mat ProjectData = Mat::zeros(n, dimSpace, image.type());
         // Y = ProjectData;
         ProjectData = images[sampleIdx]*ProjectMatrix;
         // prepare to write in the .xml file
-        projections.push_back(ProjectData);
+        _projections.push_back(ProjectData);
        // _labels.push_back(_labels)
     }
 

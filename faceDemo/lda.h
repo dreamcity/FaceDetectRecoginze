@@ -27,11 +27,11 @@ public:
     vector<Mat> getProjections();
 
 private:
-   int num_components;
-   Mat eigenvectors;
-   Mat eigenvalues;
-   Mat meanTotal;
-   vector<Mat> projections;
+   int _num_components;
+   Mat _eigenvectors;
+   Mat _eigenvalues;
+   Mat _meanTotal;
+   vector<Mat> _projections;
 };
 
 #endif // LDA_H
