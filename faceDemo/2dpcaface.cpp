@@ -40,18 +40,68 @@ inline void writeFileNodeList(FileStorage& fs, const string& name,
     fs << "]";
 }
 
+//void PCA2DFaces::subproject(vector<Mat> images)
+//{
+//    for(unsigned int sampleIdx = 0; sampleIdx < numSamples; sampleIdx++)
+//    {
+//        unsigned int dimSpace = _num_components; // num of components
+
+//        // choose the bigest dimSpace eigenvectors as the backproject matrix
+//        // i.e BackprojectMatrix X={X(0),X(1),...X(dimSpace)}
+//        // Y=AX, Y denote the matrix after backproject
+//        Mat ProjectMatrix = Mat::zeros(n, dimSpace, CV_32FC1);
+//        for (unsigned int i = 0; i < dimSpace; ++i)
+//        {
+//            _eigenvectors.col(i).copyTo(ProjectMatrix.col(i));
+//        }
+//        // X = ProjectData;
+//        Mat ProjectData = Mat::zeros(n, dimSpace, CV_32FC1);
+//        // Y = ProjectData;
+//        ProjectData = images[sampleIdx]*ProjectMatrix;
+//        // prepare to write in the .xml file
+//        _projections.push_back(ProjectData);
+//       // _labels.push_back(_labels)
+//    }
+//}
+template<typename _Tp>
+inline vector<_Tp> remove_dups(const vector<_Tp>& src) {
+    typedef typename set<_Tp>::const_iterator constSetIterator;
+    typedef typename vector<_Tp>::const_iterator constVecIterator;
+    set<_Tp> set_elems;
+    for (constVecIterator it = src.begin(); it != src.end(); ++it)
+        set_elems.insert(*it);
+    vector<_Tp> elems;
+    for (constSetIterator it = set_elems.begin(); it != set_elems.end(); ++it)
+        elems.push_back(*it);
+    return elems;
+}
 
 void PCA2DFaces::train(InputArrayOfArrays _src, InputArray _local_labels)
 {
     
     // get the  numberof samples
     vector<Mat> images;
-  //  vector<Mat> labelstemp;
+    vector<int> labelclass;
+    vector<Mat> projections;
+    // vector<Mat> labelstemp;
     Mat labels = _local_labels.getMat(); // vector<int> labels
+
+
+    std::vector<int> labelstmp;
+    // safely copy the labels
+    {
+        Mat tmp = _local_labels.getMat();
+        for(unsigned int i = 0; i < tmp.total(); i++)
+        {
+            labelstmp.push_back(tmp.at<int>(i));
+        }
+    }
+    // number of unique labels
+    int C = (int) remove_dups(labelstmp).size();
+
     //cout<<"labels.data:"<<labels.total()<<endl;
     _src.getMatVector(images); // vector<Mat> images
- //   _local_labels.getMatVector(labelstemp);
-//    _local_labels.getMatVector(labels);
+
     unsigned int numSamples=images.size(); // the total number of all samples
     
     // matrix (m x n)
@@ -61,8 +111,8 @@ void PCA2DFaces::train(InputArrayOfArrays _src, InputArray _local_labels)
 
 
     // clip number of components to be valid
-    if((_num_components <= 0) || (_num_components > n))
-        _num_components = n;  // all the components
+    if((_num_components <= 0) || (_num_components > C-1))
+        _num_components = C-1;  // all the components
 
     Mat DataSum = Mat::zeros(m, n, CV_32FC1);  //add all the samples together
     Mat DataMean = Mat::zeros(m, n, CV_32FC1); // compute the mean of samples,eigen-face
@@ -93,7 +143,7 @@ void PCA2DFaces::train(InputArrayOfArrays _src, InputArray _local_labels)
     eigen( Covariance, _eigenvalues, _eigenvectors );
     transpose(_eigenvectors, _eigenvectors); // eigenvectors by column
 
-   // _labels = labels.clone();
+    //_labels = labels.clone();
 
     // eigenvalues – output vector of eigenvalues of the same type as src;
     //   the eigenvalues are stored in the descending order.
@@ -106,10 +156,11 @@ void PCA2DFaces::train(InputArrayOfArrays _src, InputArray _local_labels)
     _projections.clear();
 
     _labels = labels.clone();
+    // subproject(images);
     // deal all the samples
     for(unsigned int sampleIdx = 0; sampleIdx < numSamples; sampleIdx++)
     {
-        unsigned int dimSpace = _num_components; // num of components
+        unsigned int dimSpace = n-C; // num of components
 
         // choose the bigest dimSpace eigenvectors as the backproject matrix
         // i.e BackprojectMatrix X={X(0),X(1),...X(dimSpace)}
@@ -117,20 +168,29 @@ void PCA2DFaces::train(InputArrayOfArrays _src, InputArray _local_labels)
         Mat ProjectMatrix = Mat::zeros(n, dimSpace, CV_32FC1);
         for (unsigned int i = 0; i < dimSpace; ++i)
         {
-//            ProjectMatrix.col(i) = _eigenvectors.col(i);
             _eigenvectors.col(i).copyTo(ProjectMatrix.col(i));
         }
         // X = ProjectData;
         Mat ProjectData = Mat::zeros(n, dimSpace, CV_32FC1);
         // Y = ProjectData;
-//        ProjectData = ProjectMatrix;
         ProjectData = images[sampleIdx]*ProjectMatrix;
+//        cout<<"ProjectData.row:"<<ProjectData.rows<<endl;
+//        cout<<"ProjectData.col:"<<ProjectData.cols<<endl;
         // prepare to write in the .xml file
-        _projections.push_back(ProjectData);
+        projections.push_back(ProjectData);
        // _labels.push_back(_labels)
+        labelclass.push_back(labels.at<int>(sampleIdx));
     }
+    LDAT ldaAGL(_num_components);
+    ldaAGL.lda(projections,labelclass);
+    _num_pca_coms = n-C;
+    _eigenvalues = ldaAGL.getValues();
+    _eigenvectorslda = ldaAGL.getVectors();
+   // _mean = ldaAGL.getMean();
+    _projections = ldaAGL.getProjections();
 
 }
+
 // FaceRecognizer::save(const string& filename) -- > PCA2DFaces::save(FileStorage& fs)
 void FaceRecognizer::save(const string& filename) const
 {
@@ -143,10 +203,12 @@ void FaceRecognizer::save(const string& filename) const
 void PCA2DFaces::save(FileStorage& fs) const
 {
     // write matrices
+    fs << "num_pca_coms" << _num_pca_coms;
     fs << "num_components" << _num_components;
     fs << "mean" << _mean;
     fs << "eigenvalues" << _eigenvalues;
     fs << "eigenvectors" << _eigenvectors;
+    fs << "eigenvectorslda"<< _eigenvectorslda;
     // write sequences
     writeFileNodeList(fs, "projections", _projections);
     fs << "labels" << _labels;
@@ -164,10 +226,12 @@ void FaceRecognizer::load(const string& filename)
 void PCA2DFaces::load(const FileStorage& fs)
 {
     //read matrices
+    fs["num_pca_coms"] >>_num_pca_coms;
     fs["num_components"] >> _num_components;
     fs["mean"] >> _mean;
     fs["eigenvalues"] >> _eigenvalues;
     fs["eigenvectors"] >> _eigenvectors;
+    fs["eigenvectorslda"] >> _eigenvectorslda;
     // read sequences
     readFileNodeList(fs["projections"], _projections);
     fs["labels"] >> _labels;
@@ -179,7 +243,7 @@ void PCA2DFaces::load(const FileStorage& fs)
 void PCA2DFaces::predict(InputArray _src, int &minClass, double &minDist) const
 {
     minClass = -1;
-    minDist = 150; // nothing to use;
+    minDist = 0; // nothing to use;
     predict(_src);
 }
 //******************************************
@@ -192,7 +256,7 @@ int PCA2DFaces::predict(InputArray _src) const
     src.convertTo(src,CV_32F);
     unsigned int m = src.rows;
     unsigned int n = src.cols;
-    unsigned int dimSpace = _num_components; // num of components
+    unsigned int dimSpace = _num_pca_coms; // num of components
 
     // choose the bigest dimSpace eigenvectors as the backproject matrix
     // i.e BackprojectMatrix X={X(0),X(1),...X(dimSpace)}
@@ -201,13 +265,24 @@ int PCA2DFaces::predict(InputArray _src) const
 
     for (unsigned int i = 0; i < dimSpace; ++i)
     {
-//        ProjectMatrix.col(i) = _eigenvectors.col(i);
          _eigenvectors.col(i).copyTo(ProjectMatrix.col(i));
     }
     // X = ProjectData;
-    Mat ProjectData = Mat::zeros(m, dimSpace, CV_32FC1);
+    Mat ProjectDatapca = Mat::zeros(m, dimSpace, CV_32FC1);
     // Y = ProjectData;
-    ProjectData = src*ProjectMatrix;
+      ProjectDatapca = src*ProjectMatrix;
+//    ProjectDatapca = src.mul(ProjectMatrix);
+
+    // lda project
+    unsigned int dim = _num_components;
+    Mat ProjectMatrixlda = Mat::zeros(dimSpace, dim, CV_32FC1);
+    for (unsigned int i = 0; i < dim; ++i)
+    {
+         _eigenvectorslda.col(i).copyTo(ProjectMatrixlda.col(i));
+    }
+    Mat ProjectData = Mat::zeros(m, dim, CV_32FC1);
+    ProjectData = ProjectDatapca *ProjectMatrixlda;
+    //ProjectData = ProjectDatapca.mul(ProjectMatrixlda);
 
     // initialize the default class equal 1
     int  minClass = _labels.at<int>((int)0);

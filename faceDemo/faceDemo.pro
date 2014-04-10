@@ -16,13 +16,15 @@ SOURCES += main.cpp\
         detect2recognize.cpp \
     detect.cpp \
     recognize.cpp \
-    2dpcaface.cpp
+    2dpcaface.cpp \
+    lda.cpp
 
 HEADERS  += detect2recognize.h \
     detect.h \
     recognize.h \
     2dpcaface.hpp \
-    2dpcaface.h
+    2dpcaface.h \
+    lda.h
 
 FORMS    += detect2recognize.ui \
     detect.ui \
