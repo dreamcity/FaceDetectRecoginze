@@ -453,6 +453,7 @@ compiler_moc_header_clean:
 	-$(DEL_FILE) moc_detect2recognize.cpp moc_detect.cpp moc_recognize.cpp
 moc_detect2recognize.cpp: ../faceDemo/detect.h \
 		../faceDemo/2dpcaface.h \
+		../faceDemo/lda.h \
 		/usr/local/include/opencv2/opencv.hpp \
 		/usr/local/include/opencv2/core/core_c.h \
 		/usr/local/include/opencv2/core/types_c.h \
@@ -602,6 +603,7 @@ moc_detect2recognize.cpp: ../faceDemo/detect.h \
 	/home/dreamcity/opt/QT5.2.1/5.2.1/gcc_64/bin/moc $(DEFINES) $(INCPATH) ../faceDemo/detect2recognize.h -o moc_detect2recognize.cpp
 
 moc_detect.cpp: ../faceDemo/2dpcaface.h \
+		../faceDemo/lda.h \
 		/usr/local/include/opencv2/opencv.hpp \
 		/usr/local/include/opencv2/core/core_c.h \
 		/usr/local/include/opencv2/core/types_c.h \
@@ -856,6 +858,7 @@ moc_recognize.cpp: ../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtWidgets/QDialog \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtGui/qtouchdevice.h \
 		../faceDemo/detect.h \
 		../faceDemo/2dpcaface.h \
+		../faceDemo/lda.h \
 		/usr/local/include/opencv2/opencv.hpp \
 		/usr/local/include/opencv2/core/core_c.h \
 		/usr/local/include/opencv2/core/types_c.h \
@@ -917,6 +920,7 @@ compiler_clean: compiler_moc_header_clean compiler_uic_clean
 main.o: ../faceDemo/main.cpp ../faceDemo/detect2recognize.h \
 		../faceDemo/detect.h \
 		../faceDemo/2dpcaface.h \
+		../faceDemo/lda.h \
 		/usr/local/include/opencv2/opencv.hpp \
 		/usr/local/include/opencv2/core/core_c.h \
 		/usr/local/include/opencv2/core/types_c.h \
@@ -1074,6 +1078,7 @@ main.o: ../faceDemo/main.cpp ../faceDemo/detect2recognize.h \
 detect2recognize.o: ../faceDemo/detect2recognize.cpp ../faceDemo/detect2recognize.h \
 		../faceDemo/detect.h \
 		../faceDemo/2dpcaface.h \
+		../faceDemo/lda.h \
 		/usr/local/include/opencv2/opencv.hpp \
 		/usr/local/include/opencv2/core/core_c.h \
 		/usr/local/include/opencv2/core/types_c.h \
@@ -1264,6 +1269,7 @@ detect2recognize.o: ../faceDemo/detect2recognize.cpp ../faceDemo/detect2recogniz
 
 detect.o: ../faceDemo/detect.cpp ../faceDemo/detect.h \
 		../faceDemo/2dpcaface.h \
+		../faceDemo/lda.h \
 		/usr/local/include/opencv2/opencv.hpp \
 		/usr/local/include/opencv2/core/core_c.h \
 		/usr/local/include/opencv2/core/types_c.h \
@@ -1562,6 +1568,7 @@ recognize.o: ../faceDemo/recognize.cpp ../faceDemo/recognize.h \
 		../../../opt/QT5.2.1/5.2.1/gcc_64/include/QtGui/qtouchdevice.h \
 		../faceDemo/detect.h \
 		../faceDemo/2dpcaface.h \
+		../faceDemo/lda.h \
 		/usr/local/include/opencv2/opencv.hpp \
 		/usr/local/include/opencv2/core/core_c.h \
 		/usr/local/include/opencv2/core/types_c.h \
@@ -1632,6 +1639,7 @@ recognize.o: ../faceDemo/recognize.cpp ../faceDemo/recognize.h \
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o recognize.o ../faceDemo/recognize.cpp
 
 2dpcaface.o: ../faceDemo/2dpcaface.cpp ../faceDemo/2dpcaface.h \
+		../faceDemo/lda.h \
 		/usr/local/include/opencv2/opencv.hpp \
 		/usr/local/include/opencv2/core/core_c.h \
 		/usr/local/include/opencv2/core/types_c.h \
