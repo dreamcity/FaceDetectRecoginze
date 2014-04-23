@@ -41,6 +41,8 @@ class Detect : public QDialog
 
 public:
     explicit Detect(QWidget *parent = 0);
+    void initialize();
+
     // detect the face region, return a series reatanges
     void detectFace(Mat frameface, vector<Rect> &faces);
     // createImgDataFile , save the imgdatafile in the imgfilepath

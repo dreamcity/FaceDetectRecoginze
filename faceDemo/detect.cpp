@@ -17,10 +17,56 @@ Detect::Detect(QWidget *parent) :
     // always open the camera
     ON_OFF=true;
     // load the classifier , support by the offical opencv
-    face_cascade_name = "haarcascade_frontalface_alt.xml";
+    //  face_cascade_name = "haarcascade_frontalface_alt.xml"; //haar-like characteristic
+    face_cascade_name = "lbpcascade_frontalface.xml";   //LBP characteristic
 
     flag = false;
+    initialize();
 
+}
+void Detect::initialize()
+{
+    DIR *dp0;
+///*    if((dp0=opendir("../facedata"))==NULL)
+//        {
+//            mkdir("../facedata", 0777);
+//            cout <<"filefolder was successfully created"<<endl;
+//        }
+//    else
+//        {
+//            cou*/t <<"filefolder was exist"<<endl;
+//        }
+    DIR *dp1;
+    struct dirent *dirp;
+    if((dp1=opendir("../facedata/img001"))==NULL)
+    {
+        cout<<"No file is found"<<endl;
+        indexPerson=1;
+    }
+    else
+    {
+        // search the whole fold, get the last fold
+        dp0=opendir("../facedata");
+        while ((dirp=readdir(dp0))!=NULL)
+        {
+            if (dirp->d_name[0]=='i')
+            {
+                int temp=0;
+                int k=1;
+                for(int j=5; j>=3; j--)
+                {
+                    temp+=(dirp->d_name[j]-'0')*k;
+                    k*=10;
+                }
+                indexPerson=(indexPerson>=temp?indexPerson:temp);
+            }
+        }
+
+    }
+    indexPerson++;
+    string str0;
+    str0=format("%d",  indexPerson);
+    ui->label_name->setText(str0.c_str());
 }
 
 Detect::~Detect()
@@ -36,7 +82,7 @@ void Detect::on_startCam_clicked()
     // open the default camera , the parameter means the index of the camera device
     cap.open(-1);
     // initialize th person label with 1;
-    ui->label_name->setText("Camera test!--Person:1");
+    //ui->label_name->setText("Camera test!--Person:1");
     //always get the frame from video cap
     while(ON_OFF)
     {
