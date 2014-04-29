@@ -98,9 +98,10 @@ void LDAT::lda(InputArrayOfArrays _src, InputArray _lbls)
     }
 
     // clip number of components to be a valid number
-    if ((_num_components <= 0) || (_num_components > (C - 1))) {
-        _num_components = (C - 1);
-    }
+    //if ((_num_components <= 0) || (_num_components > (C - 1)))
+    // {
+    //    _num_components = (C - 1);
+    // }
 
     Mat meanTotal = Mat::zeros(m, n, image.type());
     std::vector<Mat> meanClass(C);

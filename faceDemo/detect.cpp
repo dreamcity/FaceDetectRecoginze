@@ -17,8 +17,8 @@ Detect::Detect(QWidget *parent) :
     // always open the camera
     ON_OFF=true;
     // load the classifier , support by the offical opencv
-    //  face_cascade_name = "haarcascade_frontalface_alt.xml"; //haar-like characteristic
-    face_cascade_name = "lbpcascade_frontalface.xml";   //LBP characteristic
+    face_cascade_name = "haarcascade_frontalface_alt.xml"; //haar-like characteristic
+    //face_cascade_name = "lbpcascade_frontalface.xml";   //LBP characteristic
 
     flag = false;
     initialize();
@@ -596,7 +596,7 @@ void Detect::read_csv(const string& filename, vector<Mat>& images, vector<int>& 
 // then train it, get the traindatafile.xml
 string Detect::faceTrain(std::vector<Mat> images,std::vector<int> labels)
 {
-    Ptr<FaceRecognizer> model = cv::createPCA2DFaceRecognizer(2);
+    Ptr<FaceRecognizer> model = cv::createPCA2DFaceRecognizer();
     // call the PCA2DFaces::train()
     // using the 2DPCA AGL
     model->train(images, labels);
@@ -635,7 +635,7 @@ string Detect::faceTrain(std::vector<Mat> images,std::vector<int> labels)
 // last select the label from database and show it on the textlabels
 void Detect::faceReg(const string& configfile,std::vector<Mat> showimages, std::vector<Mat> testimages)
 {
-    Ptr<FaceRecognizer> model = createPCA2DFaceRecognizer(2);
+    Ptr<FaceRecognizer> model = createPCA2DFaceRecognizer();
     model->load(configfile);
 
 //      Ptr<FaceRecognizer> model = createEigenFaceRecognizer();
