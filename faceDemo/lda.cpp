@@ -61,6 +61,7 @@ void LDAT::lda(InputArrayOfArrays _src, InputArray _lbls)
     std::vector<Mat> images;
     _src.getMatVector(images);
     unsigned int numSamples=images.size(); // the total number of all samples
+    cout<<"numSamples:"<<numSamples<<endl;
     // matrix (m x n)
     Mat image = images[images.size()-1];
     int m = image.rows;
@@ -113,15 +114,18 @@ void LDAT::lda(InputArrayOfArrays _src, InputArray _lbls)
         numClass[i] = 0;
         meanClass[i] = Mat::zeros(m, n, image.type());
     }
-
+    // calculate sums
     for (uint i = 0; i < numSamples; i++)
     {
 
         Mat instance = images[i];
         int classIdx = mapped_labels[i];
-        add(meanTotal, instance, meanTotal);
+        //add(meanTotal, instance, meanTotal);
+        meanTotal+=instance;
+
         // get the every class total values
         add(meanClass[classIdx], instance, meanClass[classIdx]);
+        // meanClass[classIdx]+=instance;
         // store the nums of each class
         numClass[classIdx]++;
 
@@ -164,7 +168,7 @@ void LDAT::lda(InputArrayOfArrays _src, InputArray _lbls)
         Mat tmp;
         subtract(meanClass[i], meanTotal, tmp);
         mulTransposed(tmp, tmp, true);
-        tmp *= numClass[i];
+       // tmp *= numClass[i];
         add(Sb, tmp, Sb);
     }
 
@@ -172,6 +176,7 @@ void LDAT::lda(InputArrayOfArrays _src, InputArray _lbls)
     Mat Swi = Sw.inv();
     // M = inv(Sw)*Sb
     Mat M;
+    // M = (1 / (double) numSamples)*Covariance;
     gemm(Swi, Sb, 1.0, Mat(), 0.0, M);
 
     eigen( M, _eigenvalues, _eigenvectors );

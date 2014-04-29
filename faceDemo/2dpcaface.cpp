@@ -160,7 +160,7 @@ void PCA2DFaces::train(InputArrayOfArrays _src, InputArray _local_labels)
     // deal all the samples
     for(unsigned int sampleIdx = 0; sampleIdx < numSamples; sampleIdx++)
     {
-        unsigned int dimSpace = numSamples-C; // num of components
+        unsigned int dimSpace = n-C; // num of components
 
         // choose the bigest dimSpace eigenvectors as the backproject matrix
         // i.e BackprojectMatrix X={X(0),X(1),...X(dimSpace)}
@@ -186,11 +186,11 @@ void PCA2DFaces::train(InputArrayOfArrays _src, InputArray _local_labels)
     // but it doesnot work well
     // i set it equals numSamples-C;
     // so actually the lda means nothing
-    _num_components = numSamples-C;
+    _num_components = C-1;
     //**************************************************************
     LDAT ldaAGL(_num_components);
     ldaAGL.lda(projections,labelclass);
-    _num_pca_coms =  numSamples-C;
+    _num_pca_coms =  n-C;
     _eigenvalues = ldaAGL.getValues();
     _eigenvectorslda = ldaAGL.getVectors();
     _mean = ldaAGL.getMean();
